@@ -30,7 +30,7 @@ html, body {
   display:flex;
   gap:20px;
   margin-top:20px;
-  position:relative; /* for No button */
+  position:relative; /* For No button */
 }
 .button-group button {
   padding:10px 25px;
@@ -46,7 +46,7 @@ html, body {
 
 #noBtn {
   position:absolute;
-  left:0; top:0;
+  left:50px; top:50px; /* Start away from Yes/Obviously */
   transition:left 0.3s, top 0.3s;
 }
 
@@ -128,7 +128,6 @@ document.addEventListener("DOMContentLoaded", function(){
   function showFinalPage() {
     main.classList.remove("visible");
     final.classList.add("visible");
-    // fade in each line
     finalLines.forEach((el,i)=>{
       setTimeout(()=>el.classList.add("show"), i*600);
     });
@@ -138,7 +137,7 @@ document.addEventListener("DOMContentLoaded", function(){
   // Button clicks
   yesBtn.onclick = showFinalPage;
   obviouslyBtn.onclick = showFinalPage;
-  noBtn.onclick = showFinalPage; // optional: can alert if you want
+  noBtn.onclick = showFinalPage; // Optional: or alert
 
   // Replay
   replayBtn.onclick = function() {
@@ -146,8 +145,8 @@ document.addEventListener("DOMContentLoaded", function(){
     finalLines.forEach(el=>el.classList.remove("show"));
     replayBtn.classList.remove("show");
     main.classList.add("visible");
-    // reset no button position
-    noBtn.style.left="0"; noBtn.style.top="0";
+    // Reset no button position away from Yes
+    noBtn.style.left="50px"; noBtn.style.top="50px";
   }
 });
 </script>
