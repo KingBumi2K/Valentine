@@ -11,6 +11,7 @@ html, body {
   font-family:'Inter', sans-serif;
   overflow:hidden;
   background: linear-gradient(135deg, #ffe6f0 0%, #ffd6e8 40%, #ffc0d9 70%, #ffb3cc 100%);
+  position:relative;
 }
 
 /* --- Pages --- */
@@ -19,15 +20,17 @@ html, body {
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  height:100vh;
-  width:100vw;
   text-align:center;
-  padding:20px;
-  box-sizing:border-box;
+  position:absolute;
+  top:0; left:0;
+  height:100vh; width:100vw;
   opacity:0;
-  transition: opacity 1s ease;
+  transition:opacity 1s ease;
 }
-.page.visible {opacity:1;}
+.page.visible { opacity:1; z-index:3; }
+
+/* Splash Page */
+#splashPage { z-index:4; }
 
 /* Buttons */
 button {
@@ -47,8 +50,8 @@ button:hover {transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2);
 .collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-top:20px; margin-bottom:30px; }
 .collage img { width:140px; height:140px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); cursor:pointer; }
 
-/* No button */
-#noBtn { transition:left 0.5s ease, top 0.5s ease; position:relative; }
+/* No Button */
+#noBtn { transition:left 0.5s ease, top 0.5s ease; position:absolute; }
 @keyframes wiggle {0%{transform:translateX(0);}25%{transform:translateX(-6px);}50%{transform:translateX(6px);}75%{transform:translateX(-4px);}100%{transform:translateX(0);}}
 #noBtn.wiggle { animation: wiggle 0.5s ease; }
 
@@ -56,11 +59,11 @@ button:hover {transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2);
 #countdownCard { margin-top:20px; padding:25px 40px; max-width:420px; background:rgba(255,255,255,0.7); border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); font-size:1.3em; }
 
 /* Hearts */
-.heart { position:fixed; bottom:-40px; font-size:20px; color:#ff99cc; opacity:0.7; pointer-events:none; animation:floatUp 16s linear forwards; }
+.heart { position:fixed; bottom:-40px; font-size:20px; color:#ff99cc; opacity:0.7; pointer-events:none; animation:floatUp 16s linear forwards; z-index:1;}
 @keyframes floatUp {0%{transform:translateY(0) rotate(0deg); opacity:0.7;}50%{transform:translateY(-60vh) rotate(10deg);}100%{transform:translateY(-120vh) rotate(-10deg); opacity:0;}}
 
 /* Final Screen */
-#finalScreen {display:flex; flex-direction:column; justify-content:flex-start; align-items:center; height:100vh; width:100vw; text-align:center; padding-top:60px; box-sizing:border-box;}
+#finalScreen {display:flex; flex-direction:column; justify-content:flex-start; align-items:center; text-align:center; padding-top:60px; box-sizing:border-box;}
 .final-line, #finalImage { opacity:0; transform:translateY(10px); transition:opacity 1.2s ease, transform 1.2s ease; }
 .final-line.show, #finalImage.show { opacity:1; transform:translateY(0); }
 .final-wink { opacity:0; font-size:1.1em; margin-top:30px; transition: opacity 2s ease; }
@@ -82,12 +85,12 @@ button:hover {transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2);
   <source src="music/song.mp3" type="audio/mpeg">
 </audio>
 
-<!-- Splash Page -->
+<!-- Splash -->
 <div id="splashPage" class="page visible">
   <button id="startBtn">Touch Me</button>
 </div>
 
-<!-- Main Page -->
+<!-- Main -->
 <div id="mainContent" class="page">
   <div class="collage">
     <img src="images/pic1.jpg" onclick="openModal(this)">
@@ -109,7 +112,7 @@ button:hover {transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2);
   </div>
 </div>
 
-<!-- Final Screen -->
+<!-- Final -->
 <div id="finalScreen" class="page">
   <h1 class="final-line">Happy Valentine’s Day, cutie</h1>
   <p class="final-line">Every day with you is my favorite one.</p>
@@ -132,21 +135,19 @@ button:hover {transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2);
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
+  const splash=document.getElementById("splashPage");
+  const main=document.getElementById("mainContent");
+  const final=document.getElementById("finalScreen");
+  const startBtn=document.getElementById("startBtn");
+  const music=document.getElementById("bgMusic");
+  const noBtn=document.getElementById("noBtn");
+  const replayBtn=document.getElementById("replayBtn");
+  const finalImage=document.getElementById("finalImage");
 
-  const splash = document.getElementById("splashPage");
-  const main = document.getElementById("mainContent");
-  const final = document.getElementById("finalScreen");
-  const startBtn = document.getElementById("startBtn");
-  const music = document.getElementById("bgMusic");
-  const noBtn = document.getElementById("noBtn");
-  const replayBtn = document.getElementById("replayBtn");
-  const finalImage = document.getElementById("finalImage");
-
-  // Name animation
-  function animateName() {
-    const nameText = "Hannah Prillaman";
-    const nameEl = document.getElementById("name");
-    nameEl.innerHTML = "";
+  function animateName(){
+    const nameText="Hannah Prillaman";
+    const nameEl=document.getElementById("name");
+    nameEl.innerHTML="";
     nameText.split("").forEach((c,i)=>{
       const s=document.createElement("span");
       s.textContent=c;
@@ -157,7 +158,7 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
-  // Touch Me
+  // Splash click
   startBtn.onclick=function(){
     splash.classList.remove("visible");
     main.classList.add("visible");
@@ -166,7 +167,7 @@ document.addEventListener("DOMContentLoaded", function(){
   }
 
   // Countdown
-  const countdown = document.getElementById("countdown");
+  const countdown=document.getElementById("countdown");
   function updateCountdown(){
     const now=new Date();
     const target=new Date(new Date().getFullYear(),1,14);
@@ -181,11 +182,11 @@ document.addEventListener("DOMContentLoaded", function(){
   updateCountdown();
 
   // No button hover
-  const protectedElements = [document.querySelector(".collage"), document.getElementById("countdownCard"), document.querySelector(".button-group"), document.getElementById("name"), document.querySelector("h2")];
+  const protectedElements=[document.querySelector(".collage"), document.getElementById("countdownCard"), document.querySelector(".button-group"), document.getElementById("name"), document.querySelector("h2")];
   function overlaps(x,y){
     return protectedElements.some(el=>{
       const r=el.getBoundingClientRect();
-      return !(x+noBtn.offsetWidth<r.left || x>r.right || y+noBtn.offsetHeight<r.top || y>r.bottom);
+      return !(x+noBtn.offsetWidth<r.left||x>r.right||y+noBtn.offsetHeight<r.top||y>r.bottom);
     });
   }
   noBtn.onmouseover=function(){
@@ -194,12 +195,11 @@ document.addEventListener("DOMContentLoaded", function(){
     const maxY=window.innerHeight-noBtn.offsetHeight-margin;
     let x,y,attempts=0;
     do{x=Math.random()*maxX+margin; y=Math.random()*maxY+margin; attempts++;} while(overlaps(x,y)&&attempts<100);
-    noBtn.style.position="absolute";
     noBtn.style.left=x+'px';
     noBtn.style.top=y+'px';
     noBtn.classList.add("wiggle");
     noBtn.addEventListener("animationend", function h(){ noBtn.classList.remove("wiggle"); noBtn.removeEventListener("animationend",h); });
-  };
+  }
 
   // Modal
   window.openModal=function(img){
@@ -226,7 +226,6 @@ document.addEventListener("DOMContentLoaded", function(){
     document.querySelectorAll(".final-line,.final-wink,#finalImage").forEach(el=>el.classList.remove("show"));
     noBtn.style.left=""; noBtn.style.top="";
   }
-
 });
 </script>
 </body>
