@@ -38,9 +38,10 @@ html, body {
 /* Buttons */
 .button-group {
   display: flex;
+  justify-content: center; /* center all buttons as a group */
   gap: 20px;
   margin-top: 20px;
-  position: relative; /* container for No button absolute positioning */
+  position: relative; /* container for No button */
 }
 
 .button-group button, #startBtn, #replayBtn {
@@ -56,26 +57,17 @@ html, body {
   transition: all 0.3s ease;
 }
 
-/* Keep Yes and Obviously stationary */
-#yesBtn,
-#obviouslyBtn {
-  position: static;
-}
-
-/* No button initially positioned beside the other buttons */
+/* No button can move independently without breaking layout */
 #noBtn {
-  position: absolute; 
-  left: calc(100% + 20px); /* starts just to the right of the other buttons */
+  position: absolute; /* move freely */
   top: 0;
+  left: 50%; /* start near the center of button group */
+  transform: translateX(-50%);
   transition: left 0.5s ease, top 0.5s ease;
 }
 
-.button-group button:hover, #startBtn:hover, #replayBtn:hover { 
-  transform: translateY(-2px); 
-}
-
-#noBtn.wiggle { 
-  animation: wiggle 0.5s ease; 
+#noBtn.wiggle {
+  animation: wiggle 0.5s ease;
 }
 
 @keyframes wiggle {
@@ -250,13 +242,19 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
-  noBtn.onmouseover = function() {
+  noBtn.style.position = 'absolute';
+const buttonGroupRect = document.querySelector('.button-group').getBoundingClientRect();
+noBtn.style.top = '0px';
+noBtn.style.left = '50%';
+noBtn.style.transform = 'translateX(-50%)';
+
+noBtn.onmouseover = function() {
     const protectedElements = [
         document.querySelector(".collage"),
         document.getElementById("countdownCard"),
-        document.querySelector(".button-group"),
         document.getElementById("name"),
-        document.querySelector("h2")
+        document.querySelector("h2"),
+        document.querySelector(".button-group")
     ];
 
     function overlaps(x, y) {
@@ -280,7 +278,6 @@ document.addEventListener("DOMContentLoaded", function(){
         attempts++;
     } while (overlaps(x, y) && attempts < 200);
 
-    // Smoothly slide using CSS transition
     noBtn.style.left = x + 'px';
     noBtn.style.top = y + 'px';
 
@@ -289,7 +286,7 @@ document.addEventListener("DOMContentLoaded", function(){
         noBtn.classList.remove("wiggle");
         noBtn.removeEventListener("animationend", h);
     });
-  };
+};
 
 
   // Heart burst effect
