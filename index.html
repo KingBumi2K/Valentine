@@ -255,16 +255,15 @@ noBtn.style.left = (ghostRect.left - parentRect.left) + 'px';
 noBtn.style.top = (ghostRect.top - parentRect.top) + 'px';
 
 // ------------------- NO BUTTON HOVER (with hard boundaries) -------------------
-noBtn.style.position = 'absolute';
-
-// Place initially on top of ghost button
+// No button hover
+const buttonGroup = document.querySelector('.button-group');
 const ghostBtn = document.querySelector(".ghostBtn");
-const ghostRect = ghostBtn.getBoundingClientRect();
-const parentRect = ghostBtn.parentElement.getBoundingClientRect();
-noBtn.style.left = (ghostRect.left - parentRect.left) + 'px';
-noBtn.style.top = (ghostRect.top - parentRect.top) + 'px';
 
-// Track first hover
+// Place initially on top of ghost button (aligned with flex)
+noBtn.style.position = 'relative';
+noBtn.style.left = '0';
+noBtn.style.top = '0';
+
 let noHovered = false;
 
 noBtn.addEventListener("mouseover", function() {
@@ -272,24 +271,29 @@ noBtn.addEventListener("mouseover", function() {
     const btnHeight = noBtn.offsetHeight;
     const margin = 10;
 
-    // Horizontal boundaries: 0 + margin to 70% of width
-    const minX = margin;
-    const maxX = 1175 * 0.7 - btnWidth - margin;
+    // Switch to absolute inside button-group for movement
+    if (!noHovered) {
+        const ghostRect = ghostBtn.getBoundingClientRect();
+        const parentRect = buttonGroup.getBoundingClientRect();
+        noBtn.style.position = 'absolute';
+        noBtn.style.left = (ghostRect.left - parentRect.left) + 'px';
+        noBtn.style.top = (ghostRect.top - parentRect.top) + 'px';
+    }
 
-    // Vertical boundaries: never go below countdown, first hover top half
+    // Hard boundaries relative to button-group container
+    const maxX = buttonGroup.offsetWidth * 0.7 - btnWidth - margin;
+    const minX = margin;
+
     const countdown = document.getElementById("countdownCard");
     const countdownRect = countdown.getBoundingClientRect();
+    const parentTop = buttonGroup.getBoundingClientRect().top;
 
     const minY = margin;
-    const maxY = noHovered
-        ? countdownRect.top - btnHeight - margin // after first hover, anywhere above countdown
-        : (countdownRect.top / 2) - btnHeight - margin; // first hover: top portion
+    const maxY = countdownRect.top - parentTop - btnHeight - margin; // never below countdown
 
-    // Random position within boundaries
     const x = minX + Math.random() * (maxX - minX);
     const y = minY + Math.random() * (maxY - minY);
 
-    // Move No button
     noBtn.style.left = x + 'px';
     noBtn.style.top = y + 'px';
 
