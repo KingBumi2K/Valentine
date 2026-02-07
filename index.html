@@ -185,25 +185,29 @@ html, body {
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-  const splash=document.getElementById("splashPage");
-  const main=document.getElementById("mainPage");
-  const final=document.getElementById("finalPage");
-  const startBtn=document.getElementById("startBtn");
-  const music=document.getElementById("bgMusic");
-  const noBtn=document.getElementById("noBtn");
-  const replayBtn=document.getElementById("replayBtn");
-  const finalImage=document.getElementById("finalImage");
-  const finalLines=document.querySelectorAll(".final-line");
-  const nameContainer=document.getElementById("name");
+  const splash = document.getElementById("splashPage");
+  const main = document.getElementById("mainPage");
+  const final = document.getElementById("finalPage");
+  const startBtn = document.getElementById("startBtn");
+  const music = document.getElementById("bgMusic");
+  const noBtn = document.getElementById("noBtn");
+  const ghostBtn = document.querySelector(".ghostBtn");
+  const replayBtn = document.getElementById("replayBtn");
+  const finalImage = document.getElementById("finalImage");
+  const finalLines = document.querySelectorAll(".final-line");
+  const nameContainer = document.getElementById("name");
+  const countdown = document.getElementById("countdown");
+
+  let firstHover = true;
 
   // Splash click
-  startBtn.onclick=function(){
+  startBtn.onclick = function(){
     splash.classList.remove("visible");
     main.classList.add("visible");
-    music.volume=0.25;
+    music.volume = 0.25;
     music.play();
 
-    // Animate name with proper spacing
+    // Animate name
     const name = "Hannah Prillaman";
     nameContainer.innerHTML = "";
     name.split("").forEach((letter, index) => {
@@ -212,163 +216,98 @@ document.addEventListener("DOMContentLoaded", function(){
       nameContainer.appendChild(span);
       setTimeout(() => span.classList.add("show"), index * 150);
     });
-  }
+  };
 
-  // Countdown
-  const countdown=document.getElementById("countdown");
+  // Countdown Logic
   function updateCountdown(){
-    const now=new Date();
-    const target=new Date(new Date().getFullYear(),1,14);
-    const diff=Math.max(target-now,0);
-    const d=Math.floor(diff/86400000);
-    const h=Math.floor((diff%86400000)/3600000);
-    const m=Math.floor((diff%3600000)/60000);
-    const s=Math.floor((diff%60000)/1000);
-    countdown.textContent=`${d}d ${h}h ${m}m ${s}s until Valentine’s Day`;
+    const now = new Date();
+    const target = new Date(now.getFullYear(), 1, 14); // Feb 14
+    const diff = Math.max(target - now, 0);
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    countdown.textContent = `${d}d ${h}h ${m}m ${s}s until Valentine’s Day`;
   }
-  setInterval(updateCountdown,1000);
+  setInterval(updateCountdown, 1000);
   updateCountdown();
 
-  // Initial floating hearts random positions
-  document.querySelectorAll('.heart').forEach(h=>{
-      h.style.left = Math.random()*90 + 'vw';
-      h.style.animation = `floatUp ${15 + Math.random()*10}s linear infinite`;
+  // Floating hearts
+  document.querySelectorAll('.heart').forEach(h => {
+      h.style.left = Math.random() * 90 + 'vw';
+      h.style.animation = `floatUp ${15 + Math.random() * 10}s linear infinite`;
   });
 
-  // No button hover
-  const protectedElements=[document.querySelector(".collage"), document.getElementById("countdownCard"), document.querySelector(".button-group"), document.getElementById("name"), document.querySelector("h2")];
-  function overlaps(x,y){
-    return protectedElements.some(el=>{
-      const r=el.getBoundingClientRect();
-      return !(x+noBtn.offsetWidth<r.left||x>r.right||y+noBtn.offsetHeight<r.top||y>r.bottom);
-    });
-  }
-
-// Position No button initially on top of ghost button
-const ghostBtn = document.querySelector(".ghostBtn");
-noBtn.style.position = 'absolute';
-const ghostRect = ghostBtn.getBoundingClientRect();
-const parentRect = ghostBtn.parentElement.getBoundingClientRect();
-
-// Relative to button-group container
-noBtn.style.left = (ghostRect.left - parentRect.left) + 'px';
-noBtn.style.top = (ghostRect.top - parentRect.top) + 'px';
-
-// ------------------- NO BUTTON HOVER (with hard boundaries) -------------------
-const noBtn = document.getElementById("noBtn");
-const ghostBtn = document.querySelector(".ghostBtn");
-let firstHover = true;
-
-// Place No button initially aligned with ghost button
-noBtn.style.position = 'relative';
-noBtn.style.left = '0';
-noBtn.style.top = '0';
-
-noBtn.addEventListener("mouseover", () => {
+  // --- FIXED NO BUTTON LOGIC ---
+  noBtn.addEventListener("mouseover", () => {
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
-    const margin = 10;
+    const padding = 20;
 
-    // Switch to absolute for movement
     if (firstHover) {
-        const ghostRect = ghostBtn.getBoundingClientRect();
-        noBtn.style.position = 'absolute';
-        noBtn.style.left = ghostRect.left + 'px';
-        noBtn.style.top = ghostRect.top + 'px';
-        firstHover = false;
+      // On first hover, detach from the flexbox flow
+      const rect = noBtn.getBoundingClientRect();
+      noBtn.style.position = 'fixed';
+      noBtn.style.left = rect.left + 'px';
+      noBtn.style.top = rect.top + 'px';
+      firstHover = false;
     }
 
-    // Hard boundaries
-    const minX = margin;
-    const maxX = window.innerWidth - btnWidth - margin;
+    // Calculate random position within the viewport
+    const maxX = window.innerWidth - btnWidth - padding;
+    const maxY = window.innerHeight - btnHeight - padding;
 
-    const countdown = document.getElementById("countdownCard");
-    const countdownRect = countdown.getBoundingClientRect();
+    const newX = Math.random() * maxX;
+    const newY = Math.random() * maxY;
 
-    const minY = margin;
-    const maxY = countdownRect.top - btnHeight - margin; // never below countdown
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top = newY + 'px';
 
-    const x = minX + Math.random() * (maxX - minX);
-    const y = minY + Math.random() * (maxY - minY);
-
-    noBtn.style.left = x + 'px';
-    noBtn.style.top = y + 'px';
-
-    // Wiggle animation
+    // Wiggle effect
     noBtn.classList.add("wiggle");
-    noBtn.addEventListener("animationend", function h() {
-        noBtn.classList.remove("wiggle");
-        noBtn.removeEventListener("animationend", h);
-    });
-});
+    setTimeout(() => noBtn.classList.remove("wiggle"), 500);
+  });
 
   // Heart burst effect
   function heartBurst() {
-      const count = 25;
-      for (let i = 0; i < count; i++) {
-          const heart = document.createElement('div');
-          heart.className = 'heart';
-          heart.style.fontSize = (10 + Math.random()*20) + 'px';
-          heart.style.left = (50 + Math.random()*20 - 10) + '%';
-          heart.style.bottom = '20%';
-          heart.style.opacity = 0.8;
-          heart.style.position = 'absolute';
-          heart.style.color = '#ff99cc';
-          heart.style.pointerEvents = 'none';
-          heart.style.transform = `rotate(${Math.random()*360}deg)`;
-          final.appendChild(heart);
-          
-          let top = 20;
-          const interval = setInterval(() => {
-              top += 1 + Math.random()*2;
-              heart.style.bottom = top + '%';
-              heart.style.opacity -= 0.02;
-              if (heart.style.opacity <= 0) {
-                  heart.remove();
-                  clearInterval(interval);
-              }
-          }, 30);
-      }
+    for (let i = 0; i < 25; i++) {
+      const heart = document.createElement('div');
+      heart.className = 'heart';
+      heart.innerHTML = '❤';
+      heart.style.left = (40 + Math.random() * 20) + '%';
+      heart.style.bottom = '20%';
+      heart.style.position = 'fixed';
+      final.appendChild(heart);
+      
+      let bottom = 20;
+      const interval = setInterval(() => {
+        bottom += 1;
+        heart.style.bottom = bottom + '%';
+        heart.style.opacity = (100 - bottom) / 50;
+        if (bottom > 90) {
+          heart.remove();
+          clearInterval(interval);
+        }
+      }, 20);
+    }
   }
 
-  // Show final
   function showFinal(){
     main.classList.remove("visible");
     final.classList.add("visible");
-    finalLines.forEach((el,i)=>setTimeout(()=>el.classList.add("show"),i*800));
-    const imageDelay = finalLines.length * 800 + 600;
-    setTimeout(() => finalImage.classList.add("show"), imageDelay);
+    finalLines.forEach((el, i) => setTimeout(() => el.classList.add("show"), i * 800));
+    setTimeout(() => finalImage.classList.add("show"), (finalLines.length * 800) + 600);
     heartBurst();
-    replayBtn.classList.remove("show");
-    setTimeout(()=>replayBtn.classList.add("show"), 20000); // replay delayed 20s
+    setTimeout(() => replayBtn.classList.add("show"), 5000); // Reduced delay for testing
   }
 
-  // Button clicks
-  document.getElementById("yesBtn").onclick=showFinal;
-  document.getElementById("obviouslyBtn").onclick=showFinal;
-  noBtn.onclick=showFinal;
+  document.getElementById("yesBtn").onclick = showFinal;
+  document.getElementById("obviouslyBtn").onclick = showFinal;
+  noBtn.onclick = showFinal;
 
-  // Replay
-  window.replay=function(){
-    final.classList.remove("visible");
-    finalLines.forEach(el=>el.classList.remove("show"));
-    replayBtn.classList.remove("show");
-    finalImage.classList.remove("show");
-    main.classList.add("visible");
-    noBtn.style.position='relative';
-    noBtn.style.left='0';
-    noBtn.style.top='0';
-    // Reset name animation
-    nameContainer.innerHTML = "";
-    const name="Hannah Prillaman";
-    name.split("").forEach((letter,index)=>{
-      const span=document.createElement("span");
-      span.innerHTML = letter === " " ? "&nbsp;" : letter;
-      nameContainer.appendChild(span);
-      setTimeout(()=>span.classList.add("show"), index*150);
-    });
-  }
-
+  window.replay = function(){
+    location.reload(); // Simplest way to reset all states and animations
+  };
 });
 </script>
 </body>
