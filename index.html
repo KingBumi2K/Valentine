@@ -5,38 +5,45 @@
 <title>Happy Valentine’s Day</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-body {
+/* BASIC BODY SETTINGS */
+body, html {
   margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
   font-family: 'Inter', sans-serif;
-  background: radial-gradient(circle at top, #ffe6f0, transparent 70%), linear-gradient(#ffd6e8, #ffffff);
   overflow-x: hidden;
+  background: linear-gradient(135deg, #ffe6f0 0%, #ffd6e8 100%);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
 }
 
 /* HEADERS */
 h1, h2 { font-family:'Playfair Display', serif; margin-bottom:20px; }
 h1 { font-size:3em; } h2 { font-size:2em; }
 
-/* SPLASH PAGE */
-#splashPage {
-  position: fixed; inset:0;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-  text-align:center;
-  background: radial-gradient(circle at top, #ffe6f0, transparent 70%), linear-gradient(#ffd6e8, #ffffff);
-  z-index:1000;
+/* SPLASH, MAIN, FINAL PAGES: full screen + centered content */
+#splashPage, #mainContent, #finalScreen {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertical center */
+  align-items: center;     /* horizontal center */
+  text-align: center;
+  min-height: 100vh;
+  width: 100%;
+  padding: 40px 20px; /* slightly adjusted for vertical fit */
+  box-sizing: border-box;
 }
 
-/* MAIN CONTENT */
-#mainContent { text-align:center; padding:80px 20px; opacity:0; pointer-events:none; position:relative; transition: opacity 1.5s ease; }
-
+/* COLLAGE */
 .collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-bottom:50px; }
 .collage img { width:140px; height:140px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); cursor:pointer; }
 
+/* COUNTDOWN */
 #countdownCard { margin:40px auto; padding:25px 40px; max-width:420px; background:rgba(255,255,255,0.7); border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); font-size:1.3em; }
 
-/* BUTTONS INLINE, cute style */
+/* BUTTONS */
 button {
   position: relative;
   padding:14px 32px;
@@ -50,12 +57,10 @@ button {
   transition: all 0.3s ease;
 }
 button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2); }
-
-/* SPECIAL CLASSES */
 .button-group { display: flex; justify-content: center; gap: 16px; margin: 20px 0; }
 #noBtn.hovered { position:absolute; cursor:pointer; }
 
-/* Wiggle animation */
+/* Wiggle animation for No button */
 @keyframes wiggle {0% { transform: translateX(0px); }25% { transform: translateX(-6px); }50% { transform: translateX(6px); }75% { transform: translateX(-4px); }100% { transform: translateX(0px);}}
 #noBtn.wiggle { animation: wiggle 0.5s ease; }
 
@@ -63,17 +68,18 @@ button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2
 .heart { position: fixed; bottom: -40px; font-size: 20px; color: #ff99cc; opacity: 0.7; pointer-events: none; animation: floatUp 16s linear forwards; transform-origin: center; }
 @keyframes floatUp {0% { transform: translateY(0) rotate(0deg); opacity: 0.7; }25% { transform: translateY(-25vh) rotate(10deg); }50% { transform: translateY(-60vh) rotate(-10deg); opacity:0.85; }75% { transform: translateY(-90vh) rotate(5deg); }100% { transform: translateY(-120vh) rotate(-5deg); opacity: 0; }}
 
+/* MODAL */
 #modal { position:fixed; inset:0; background:rgba(0,0,0,0.8); display:none; align-items:center; justify-content:center; }
 #modal img { max-width:85%; max-height:85%; border-radius:20px; }
 
-#finalScreen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px; opacity:0; pointer-events:none; transition:opacity 2s ease; background: radial-gradient(circle at top, #ffe6f0, transparent 70%), linear-gradient(#ffd6e8, #ffffff); }
-
+/* FINAL SCREEN */
+#finalScreen { text-align:center; transition:opacity 2s ease; pointer-events:none; }
 .final-line, #finalImage { opacity:0; transform:translateY(10px); transition: opacity 1.2s ease, transform 1.2s ease; }
 .final-line.show, #finalImage.show { opacity:1; transform:translateY(0); }
 .final-wink { opacity:0; font-size:1.1em; margin-top:30px; transition:opacity 2s ease; }
 .final-wink.show { opacity:0.7; }
 
-/* REPLAY BUTTON MATCH MAIN BUTTONS */
+/* REPLAY BUTTON */
 #replayBtn { margin-top:40px; opacity:0; pointer-events:none; transition: opacity 2s ease, transform 0.3s ease, box-shadow 0.3s ease; }
 #replayBtn.show { opacity:1; pointer-events:auto; }
 </style>
