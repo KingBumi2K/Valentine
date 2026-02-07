@@ -22,10 +22,26 @@ h1 { font-size:3em; } h2 { font-size:2em; }
 
 #countdownCard { margin:40px auto; padding:25px 40px; max-width:420px; background:rgba(255,255,255,0.7); border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); font-size:1.3em; }
 
-button { font-size:1.1em; padding:14px 32px; margin:10px; border-radius:30px; border:none; background:#ff4d88; color:white; cursor:pointer; position:relative; }
-button:hover { background:#ff2f73; }
+/* BUTTONS INLINE */
+.button-group {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 20px 0;
+}
+.button-group button { position: relative; }
 
-#noBtn { position:absolute; cursor:pointer; }
+#noBtn.hovered { position:absolute; cursor:pointer; }
+
+/* Wiggle animation */
+@keyframes wiggle {
+  0% { transform: translateX(0px); }
+  25% { transform: translateX(-6px); }
+  50% { transform: translateX(6px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0px); }
+}
+#noBtn.wiggle { animation: wiggle 0.5s ease; }
 
 .heart { position:fixed; bottom:-40px; font-size:26px; color:#ff99cc; opacity:0.7; animation:floatUp 12s linear; pointer-events:none; }
 @keyframes floatUp { to { transform:translateY(-120vh); opacity:0; } }
@@ -35,8 +51,8 @@ button:hover { background:#ff2f73; }
 
 #finalScreen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px; opacity:0; pointer-events:none; transition:opacity 2s ease; background: radial-gradient(circle at top, #ffe6f0, transparent 70%), linear-gradient(#ffd6e8, #ffffff); }
 
-.final-line { opacity:0; transform:translateY(10px); transition: opacity 1.2s ease, transform 1.2s ease; }
-.final-line.show { opacity:1; transform:translateY(0); }
+.final-line, #finalImage { opacity:0; transform:translateY(10px); transition: opacity 1.2s ease, transform 1.2s ease; }
+.final-line.show, #finalImage.show { opacity:1; transform:translateY(0); }
 
 .final-wink { opacity:0; font-size:1.1em; margin-top:30px; transition:opacity 2s ease; }
 .final-wink.show { opacity:0.7; }
@@ -67,9 +83,11 @@ button:hover { background:#ff2f73; }
   <h1 id="name"></h1>
   <h2>Will you be my Valentine?</h2>
 
-  <button onclick="showFinal()">Yes</button>
-  <button onclick="showFinal()">Obviously</button>
-  <button id="noBtn">No</button>
+  <div class="button-group">
+    <button onclick="showFinal()">Yes</button>
+    <button onclick="showFinal()">Obviously</button>
+    <button id="noBtn">No</button>
+  </div>
 
   <div id="countdownCard">
     <div id="countdown"></div>
@@ -141,19 +159,13 @@ document.addEventListener("DOMContentLoaded", function() {
   music.volume=0.25;
   music.play();
 
-  // SMART NO BUTTON
+  // SMART NO BUTTON WITH WIGGLE
   const noBtn=document.getElementById("noBtn");
-  const mainContent=document.getElementById("mainContent");
   const collage=document.querySelector(".collage");
   const countdownCard=document.getElementById("countdownCard");
 
-  // start in center
-  let startX=(window.innerWidth/2-50);
-  let startY=150;
-  noBtn.style.left=startX+"px";
-  noBtn.style.top=startY+"px";
-
   noBtn.onmouseover=function(){
+    noBtn.classList.add("hovered"); // make absolute
     const margin=20;
     const maxX=window.innerWidth-100-margin;
     const maxY=window.innerHeight-60-margin;
@@ -163,29 +175,40 @@ document.addEventListener("DOMContentLoaded", function() {
       x=Math.random()*maxX+margin;
       y=Math.random()*maxY+margin;
       attempts++;
-      // prevent overlap with collage
       const collageRect=collage.getBoundingClientRect();
       const countdownRect=countdownCard.getBoundingClientRect();
-    } while ((x+80>collageRect.left && x<collageRect.right && y+30>collageRect.top && y<collageRect.bottom) ||
-             (x+80>countdownRect.left && x<countdownRect.right && y+30>countdownRect.top && y<countdownRect.bottom)
+    } while ((x+80>collage.getBoundingClientRect().left && x<collage.getBoundingClientRect().right && y+30>collage.getBoundingClientRect().top && y<collage.getBoundingClientRect().bottom) ||
+             (x+80>countdownCard.getBoundingClientRect().left && x<countdownCard.getBoundingClientRect().right && y+30>countdownCard.getBoundingClientRect().top && y<countdownCard.getBoundingClientRect().bottom)
              && attempts<50);
+
     noBtn.style.left=x+"px";
     noBtn.style.top=y+"px";
+
+    // Trigger wiggle
+    noBtn.classList.add("wiggle");
+    noBtn.addEventListener("animationend", function handler(){
+      noBtn.classList.remove("wiggle");
+      noBtn.removeEventListener("animationend", handler);
+    });
   };
 
   // FINAL SCREEN
   const finalScreen=document.getElementById("finalScreen");
   const replayBtn=document.getElementById("replayBtn");
+  const finalImage=document.getElementById("finalImage");
   window.showFinal=function(){
     music.muted=false;
     document.getElementById("mainContent").style.opacity=0;
     finalScreen.style.pointerEvents="auto";
     finalScreen.style.opacity=1;
 
-    document.querySelectorAll(".final-line").forEach((l,i)=>{
-      setTimeout(()=>l.classList.add("show"),i*800);
+    // Animate text + final image
+    const finalElements = [...document.querySelectorAll(".final-line"), finalImage];
+    finalElements.forEach((el,i)=>{
+      setTimeout(()=>el.classList.add("show"), i*800);
     });
-    setTimeout(()=>document.querySelector(".final-wink").classList.add("show"),3200);
+
+    setTimeout(()=>document.querySelector(".final-wink").classList.add("show"), 3200);
 
     replayBtn.classList.remove("show");
     setTimeout(()=>replayBtn.classList.add("show"),20000);
@@ -196,10 +219,8 @@ document.addEventListener("DOMContentLoaded", function() {
     finalScreen.style.opacity=0;
     finalScreen.style.pointerEvents="none";
     document.getElementById("mainContent").style.opacity=1;
-    document.querySelectorAll(".final-line,.final-wink").forEach(el=>el.classList.remove("show"));
-    // Reset no button to start
-    noBtn.style.left=startX+"px";
-    noBtn.style.top=startY+"px";
+    document.querySelectorAll(".final-line,.final-wink, #finalImage").forEach(el=>el.classList.remove("show"));
+    noBtn.classList.remove("hovered");
   };
 
 });
