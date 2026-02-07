@@ -277,11 +277,20 @@ noBtn.onmouseover = function() {
     const noBtnWidth = noBtn.offsetWidth;
     const noBtnHeight = noBtn.offsetHeight;
 
-    // Define boundaries: fully inside viewport
-    const maxX = window.innerWidth - noBtnWidth - margin;
-    const maxY = window.innerHeight - noBtnHeight - margin;
+    // Horizontal boundaries
     const minX = margin;
-    const minY = margin;
+    const maxX = window.innerWidth - noBtnWidth - margin;
+
+    // Vertical boundaries
+    const buttonGroupRect = document.querySelector('.button-group').getBoundingClientRect();
+    const collageRect = document.querySelector('.collage').getBoundingClientRect();
+    const countdownRect = document.getElementById('countdownCard').getBoundingClientRect();
+
+    // Max Y is the lowest visible area above buttons and countdown
+    const maxY = Math.min(buttonGroupRect.top - noBtnHeight - margin,
+                          countdownRect.top - noBtnHeight - margin,
+                          window.innerHeight - noBtnHeight - margin);
+    const minY = margin; // top of viewport
 
     let x, y, attempts = 0;
     do {
@@ -290,7 +299,7 @@ noBtn.onmouseover = function() {
         attempts++;
     } while (overlaps(x, y) && attempts < 200);
 
-    // Move smoothly
+    // Smooth move
     noBtn.style.left = x + 'px';
     noBtn.style.top = y + 'px';
 
