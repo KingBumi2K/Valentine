@@ -179,10 +179,6 @@ document.addEventListener("DOMContentLoaded", function(){
   const finalLines=document.querySelectorAll(".final-line");
   const nameContainer=document.getElementById("name");
 
-  noBtn.style.position = 'absolute';
-  noBtn.style.left = noBtn.offsetLeft + 'px';
-  noBtn.style.top = noBtn.offsetTop + 'px';
-
   // Splash click
   startBtn.onclick=function(){
     splash.classList.remove("visible");
@@ -230,15 +226,19 @@ document.addEventListener("DOMContentLoaded", function(){
       return !(x+noBtn.offsetWidth<r.left||x>r.right||y+noBtn.offsetHeight<r.top||y>r.bottom);
     });
   }
-  
-  noBtn.onmouseover = function() {
-    const buttonGroup = document.querySelector(".button-group");
-    const countdownCard = document.getElementById("countdownCard");
-    const nameEl = document.getElementById("name");
-    const header = document.querySelector("h2");
-    const collage = document.querySelector(".collage");
 
-    const protectedElements = [collage, countdownCard, buttonGroup, nameEl, header];
+  noBtn.style.position = 'absolute';
+  noBtn.style.left = '0px';
+  noBtn.style.top = '0px';
+
+  noBtn.onmouseover = function() {
+    const protectedElements = [
+        document.querySelector(".collage"),
+        document.getElementById("countdownCard"),
+        document.querySelector(".button-group"),
+        document.getElementById("name"),
+        document.querySelector("h2")
+    ];
 
     function overlaps(x, y) {
         return protectedElements.some(el => {
@@ -265,26 +265,6 @@ document.addEventListener("DOMContentLoaded", function(){
     noBtn.style.left = x + 'px';
     noBtn.style.top = y + 'px';
 
-    noBtn.classList.add("wiggle");
-    noBtn.addEventListener("animationend", function h() {
-        noBtn.classList.remove("wiggle");
-        noBtn.removeEventListener("animationend", h);
-    });
-  };
-
-    noBtn.style.position = 'absolute';
-    const margin = 10;
-    const maxX = window.innerWidth - noBtn.offsetWidth - margin;
-    const maxY = window.innerHeight - noBtn.offsetHeight - margin;
-    let x, y, attempts = 0;
-    do {
-        x = Math.random() * maxX;
-        y = Math.random() * maxY;
-        attempts++;
-    } while (overlaps(x, y) && attempts < 200);
-
-    noBtn.style.left = `${x}px`;
-    noBtn.style.top = `${y}px`;
     noBtn.classList.add("wiggle");
     noBtn.addEventListener("animationend", function h() {
         noBtn.classList.remove("wiggle");
