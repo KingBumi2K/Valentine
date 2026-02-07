@@ -28,18 +28,22 @@ html, body {
   box-sizing:border-box;
   opacity:0;
   transition:opacity 1s ease;
-  font-family:'Inter', sans-serif;
 }
 .page.visible { opacity:1; z-index:3; }
 
 /* Splash Page */
 #splashPage { z-index:4; }
 
-/* Buttons */
+/* Collage */
+.collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-bottom:30px; }
+.collage img { width:140px; height:140px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); cursor:pointer; }
+
+/* Button group */
 .button-group {
   display:flex;
   gap:20px;
-  margin-top:30px;
+  margin-top:20px;
+  position:relative; /* relative container for No button */
 }
 .button-group button, #startBtn, #replayBtn {
   flex:0 0 auto;
@@ -55,12 +59,8 @@ html, body {
 }
 .button-group button:hover, #startBtn:hover, #replayBtn:hover { transform:translateY(-2px); }
 
-/* Collage */
-.collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-top:20px; margin-bottom:30px; }
-.collage img { width:140px; height:140px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); cursor:pointer; }
-
 /* No Button */
-#noBtn { transition:left 0.5s ease, top 0.5s ease; position:absolute; }
+#noBtn { position:absolute; transition:left 0.5s ease, top 0.5s ease; }
 @keyframes wiggle {0%{transform:translateX(0);}25%{transform:translateX(-6px);}50%{transform:translateX(6px);}75%{transform:translateX(-4px);}100%{transform:translateX(0);}}
 #noBtn.wiggle { animation: wiggle 0.5s ease; }
 
