@@ -5,44 +5,87 @@
 <title>Happy Valentine’s Day</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-/* BODY + LIGHT PINK GRADIENT + NO SCROLL */
+/* BODY + LIGHT PINK GRADIENT */
 body, html {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
   font-family: 'Inter', sans-serif;
-  overflow: hidden; /* prevent scrolling */
+  overflow: hidden;
   background: linear-gradient(135deg, #ffe6f0 0%, #ffd6e8 40%, #ffc0d9 70%, #ffb3cc 100%);
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
+  position: relative;
 }
 
 /* HEADERS */
 h1, h2 { font-family:'Playfair Display', serif; margin-bottom:20px; }
-h1 { font-size:3em; } h2 { font-size:2em; }
+h1 { font-size:3em; } 
+h2 { font-size:2em; }
 
-/* SPLASH, MAIN, FINAL: CENTER CONTENT, FULL SCREEN, NO SCROLL */
+/* PAGE CONTAINERS: FULLSCREEN, CENTERED, ABSOLUTE */
 #splashPage, #mainContent, #finalScreen {
+  position: absolute; 
+  top: 0; left: 0;
+  width: 100%; height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* vertical center */
-  align-items: center;     /* horizontal center */
+  justify-content: center; 
+  align-items: center;
   text-align: center;
-  height: 100vh;           /* exactly full viewport */
-  width: 100%;
-  overflow: hidden;        /* prevent scroll inside pages */
   box-sizing: border-box;
   padding: 0 20px;
+  opacity: 0; /* hidden by default */
+  pointer-events: none;
+  transition: opacity 0.8s ease;
+}
+
+/* ACTIVE PAGE */
+.page-active {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 /* COLLAGE */
-.collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-bottom:50px; }
+.collage { 
+  display:flex; 
+  flex-wrap:wrap; 
+  justify-content:center; 
+  gap:16px; 
+  margin-top: 20px;   /* spacing below header */
+  margin-bottom:40px; /* spacing above buttons */
+}
 .collage img { width:140px; height:140px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); cursor:pointer; }
 
+/* BUTTON GROUP */
+.button-group { 
+  display: flex; 
+  justify-content: center; 
+  gap: 16px; 
+  margin: 30px 0; /* vertical spacing from collage and countdown */
+}
+
 /* COUNTDOWN */
-#countdownCard { margin:40px auto; padding:25px 40px; max-width:420px; background:rgba(255,255,255,0.7); border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); font-size:1.3em; }
+#countdownCard { 
+  margin-top: 20px; /* spacing above countdown card */
+  padding:25px 40px; 
+  max-width:420px; 
+  background:rgba(255,255,255,0.7); 
+  border-radius:30px; 
+  box-shadow:0 10px 30px rgba(0,0,0,0.1); 
+  font-size:1.3em; 
+}
+
+/* MAIN PAGE: center all elements with spacing */
+#mainContent {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  gap: 16px; /* space between collage, header, buttons, countdown */
+}
 
 /* BUTTONS */
 button {
@@ -58,7 +101,6 @@ button {
   transition: all 0.3s ease;
 }
 button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2); }
-.button-group { display: flex; justify-content: center; gap: 16px; margin: 20px 0; }
 #noBtn.hovered { position:absolute; cursor:pointer; }
 
 /* Wiggle animation for No button */
@@ -74,7 +116,7 @@ button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2
 #modal img { max-width:85%; max-height:85%; border-radius:20px; }
 
 /* FINAL SCREEN */
-#finalScreen { text-align:center; transition:opacity 2s ease; pointer-events:none; }
+#finalScreen { text-align:center; }
 .final-line, #finalImage { opacity:0; transform:translateY(10px); transition: opacity 1.2s ease, transform 1.2s ease; }
 .final-line.show, #finalImage.show { opacity:1; transform:translateY(0); }
 .final-wink { opacity:0; font-size:1.1em; margin-top:30px; transition:opacity 2s ease; }
@@ -94,7 +136,7 @@ button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2
 </audio>
 
 <!-- SPLASH PAGE -->
-<div id="splashPage">
+<div id="splashPage" class="page-active">
   <button id="startBtn">Touch me</button>
 </div>
 
@@ -145,14 +187,13 @@ document.addEventListener("DOMContentLoaded", function() {
   const music = document.getElementById("bgMusic");
   const splash = document.getElementById("splashPage");
   const mainContent = document.getElementById("mainContent");
+  const finalScreen = document.getElementById("finalScreen");
   const startBtn = document.getElementById("startBtn");
 
-  // START BUTTON CLICK TO SHOW MAIN PAGE & PLAY MUSIC
+  // START BUTTON CLICK
   startBtn.onclick = function(){
-    splash.style.opacity = 0;
-    splash.style.pointerEvents = "none";
-    mainContent.style.opacity = 1;
-    mainContent.style.pointerEvents = "auto";
+    splash.classList.remove("page-active");
+    mainContent.classList.add("page-active");
     music.volume = 0.25;
     music.play();
   };
@@ -232,14 +273,12 @@ document.addEventListener("DOMContentLoaded", function() {
   };
 
   // FINAL SCREEN
-  const finalScreen=document.getElementById("finalScreen");
   const replayBtn=document.getElementById("replayBtn");
   const finalImage=document.getElementById("finalImage");
   window.showFinal=function(){
     music.muted=false;
-    mainContent.style.opacity=0;
-    finalScreen.style.pointerEvents="auto";
-    finalScreen.style.opacity=1;
+    mainContent.classList.remove("page-active");
+    finalScreen.classList.add("page-active");
 
     const finalElements = [...document.querySelectorAll(".final-line"), finalImage];
     finalElements.forEach((el,i)=>{ setTimeout(()=>el.classList.add("show"), i*800); });
@@ -251,9 +290,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
   // REPLAY
   window.replay=function(){
-    finalScreen.style.opacity=0;
-    finalScreen.style.pointerEvents="none";
-    mainContent.style.opacity=1;
+    finalScreen.classList.remove("page-active");
+    mainContent.classList.add("page-active");
     document.querySelectorAll(".final-line,.final-wink, #finalImage").forEach(el=>el.classList.remove("show"));
     noBtn.classList.remove("hovered");
     noBtn.style.left=""; 
