@@ -255,51 +255,71 @@ noBtn.style.left = (ghostRect.left - parentRect.left) + 'px';
 noBtn.style.top = (ghostRect.top - parentRect.top) + 'px';
 
 // No button hover movement
-noBtn.onmouseover = function() {
-    const protectedElements = [
-        document.querySelector(".collage"),
-        document.getElementById("countdownCard"),
-        document.querySelector(".button-group"),
-        document.getElementById("name"),
-        document.querySelector("h2")
-    ];
+noBtn.onmouseover = (function() {
+    let firstHover = true; // tracks if it's the first hover
+    return function() {
+        const protectedElements = [
+            document.querySelector(".collage"),
+            document.getElementById("countdownCard"),
+            document.getElementById("name"),
+            document.querySelector("h2"),
+            document.querySelector(".button-group")
+        ];
 
-    function overlaps(x, y) {
-        return protectedElements.some(el => {
-            const r = el.getBoundingClientRect();
-            return !(x + noBtn.offsetWidth < r.left ||
-                     x > r.right ||
-                     y + noBtn.offsetHeight < r.top ||
-                     y > r.bottom);
+        function overlaps(x, y) {
+            return protectedElements.some(el => {
+                const r = el.getBoundingClientRect();
+                return !(x + noBtn.offsetWidth < r.left ||
+                         x > r.right ||
+                         y + noBtn.offsetHeight < r.top ||
+                         y > r.bottom);
+            });
+        }
+
+        const margin = 10;
+        const noBtnWidth = noBtn.offsetWidth;
+        const noBtnHeight = noBtn.offsetHeight;
+
+        // Measure the countdown each time
+        const countdownCard = document.getElementById("countdownCard");
+        const countdownTop = countdownCard.getBoundingClientRect().top;
+
+        // Define boundaries
+        const minX = margin;
+        const maxX = window.innerWidth - noBtnWidth - margin;
+        const minY = margin;
+        const maxY = countdownTop - noBtnHeight - margin;
+
+        let x, y, attempts = 0;
+
+        do {
+            x = minX + Math.random() * (maxX - minX);
+            if (firstHover) {
+                // Force first hover to top 30% of screen
+                y = minY + Math.random() * (window.innerHeight * 0.3 - noBtnHeight);
+            } else {
+                // Subsequent hovers anywhere above countdown
+                y = minY + Math.random() * (maxY - minY);
+            }
+            attempts++;
+        } while (overlaps(x, y) && attempts < 200);
+
+        // Clamp just in case
+        x = Math.max(minX, Math.min(x, maxX));
+        y = Math.max(minY, Math.min(y, maxY));
+
+        noBtn.style.left = x + 'px';
+        noBtn.style.top = y + 'px';
+
+        noBtn.classList.add("wiggle");
+        noBtn.addEventListener("animationend", function h() {
+            noBtn.classList.remove("wiggle");
+            noBtn.removeEventListener("animationend", h);
         });
-    }
 
-    const margin = 10;
-    const minX = margin;
-    const maxX = window.innerWidth - noBtn.offsetWidth - margin;
-
-    // bottom boundary = top of countdown card minus margin
-    const countdownCard = document.getElementById("countdownCard");
-    const countdownTop = countdownCard.getBoundingClientRect().top;
-    const minY = margin;
-    const maxY = countdownTop - noBtn.offsetHeight - margin;
-
-    let x, y, attempts = 0;
-    do {
-        x = minX + Math.random() * (maxX - minX);
-        y = minY + Math.random() * (maxY - minY);
-        attempts++;
-    } while (overlaps(x, y) && attempts < 200);
-
-    noBtn.style.left = x + 'px';
-    noBtn.style.top = y + 'px';
-
-    noBtn.classList.add("wiggle");
-    noBtn.addEventListener("animationend", function h() {
-        noBtn.classList.remove("wiggle");
-        noBtn.removeEventListener("animationend", h);
-    });
-};
+        firstHover = false; // mark that the first hover is done
+    };
+})();
 
   // Heart burst effect
   function heartBurst() {
