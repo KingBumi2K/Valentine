@@ -3,9 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Happy Valentine’s Day</title>
-
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
-
 <style>
 body {
   margin: 0;
@@ -14,177 +12,47 @@ body {
   overflow-x: hidden;
 }
 
-/* CROSSFADE */
-.fade {
-  transition: opacity 1.8s ease;
-}
+h1, h2 { font-family:'Playfair Display', serif; margin-bottom:20px; }
+h1 { font-size:3em; } h2 { font-size:2em; }
 
-/* MAIN CONTENT */
-#mainContent {
-  text-align: center;
-  padding: 80px 20px;
-  position: relative;
-}
+#mainContent { text-align:center; padding:80px 20px; position:relative; }
 
-h1, h2 {
-  font-family: 'Playfair Display', serif;
-  font-weight: 600;
-  margin-bottom: 20px;
-}
+.collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-bottom:50px; }
+.collage img { width:140px; height:140px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); cursor:pointer; }
 
-h1 { font-size: 3em; }
-h2 { font-size: 2em; }
+#countdownCard { margin:40px auto; padding:25px 40px; max-width:420px; background:rgba(255,255,255,0.7); border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); font-size:1.3em; }
 
-/* COLLAGE */
-.collage {
-  display: flex;
-  gap: 16px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin-bottom: 50px;
-}
+button { font-size:1.1em; padding:14px 32px; margin:10px; border-radius:30px; border:none; background:#ff4d88; color:white; cursor:pointer; position:relative; }
+button:hover { background:#ff2f73; }
 
-.collage img {
-  width: 140px;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 18px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-  cursor: pointer;
-}
+#noBtn { position:absolute; cursor:pointer; }
 
-/* COUNTDOWN */
-#countdownCard {
-  margin: 40px auto;
-  padding: 25px 40px;
-  max-width: 420px;
-  background: rgba(255,255,255,0.7);
-  border-radius: 30px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-  font-size: 1.3em;
-}
+.heart { position:fixed; bottom:-40px; font-size:26px; color:#ff99cc; opacity:0.7; animation:floatUp 12s linear; pointer-events:none; }
+@keyframes floatUp { to { transform:translateY(-120vh); opacity:0; } }
 
-/* BUTTONS */
-button {
-  font-size: 1.1em;
-  padding: 14px 32px;
-  margin: 10px;
-  border-radius: 30px;
-  border: none;
-  background: #ff4d88;
-  color: white;
-  cursor: pointer;
-  position: relative;
-}
+#modal { position:fixed; inset:0; background:rgba(0,0,0,0.8); display:none; align-items:center; justify-content:center; }
+#modal img { max-width:85%; max-height:85%; border-radius:20px; }
 
-button:hover {
-  background: #ff2f73;
-}
+#finalScreen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:40px; opacity:0; pointer-events:none; transition:opacity 2s ease; background: radial-gradient(circle at top, #ffe6f0, transparent 70%), linear-gradient(#ffd6e8, #ffffff); }
 
-/* NO BUTTON */
-#noBtn {
-  position: absolute;
-  cursor: pointer;
-}
+.final-line { opacity:0; transform:translateY(10px); transition: opacity 1.2s ease, transform 1.2s ease; }
+.final-line.show { opacity:1; transform:translateY(0); }
 
-/* HEARTS */
-.heart {
-  position: fixed;
-  bottom: -40px;
-  font-size: 26px;
-  color: #ff99cc;
-  opacity: 0.7;
-  animation: floatUp 12s linear;
-  pointer-events: none;
-}
+.final-wink { opacity:0; font-size:1.1em; margin-top:30px; transition:opacity 2s ease; }
+.final-wink.show { opacity:0.7; }
 
-@keyframes floatUp {
-  to {
-    transform: translateY(-120vh);
-    opacity: 0;
-  }
-}
-
-/* MODAL */
-#modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.8);
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-
-#modal img {
-  max-width: 85%;
-  max-height: 85%;
-  border-radius: 20px;
-}
-
-/* FINAL SCREEN */
-#finalScreen {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at top, #ffe6f0, transparent 70%), linear-gradient(#ffd6e8, #ffffff);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 40px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 2s ease;
-}
-
-.final-line {
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 1.2s ease, transform 1.2s ease;
-}
-
-.final-line.show {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.final-wink {
-  opacity: 0;
-  font-size: 1.1em;
-  margin-top: 30px;
-  transition: opacity 2s ease;
-}
-
-.final-wink.show {
-  opacity: 0.7;
-}
-
-/* REPLAY BUTTON */
-#replayBtn {
-  margin-top: 40px;
-  font-size: 1em;
-  padding: 12px 28px;
-  border-radius: 25px;
-  background: #ff4d88;
-  color: white;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 2s ease;
-}
-
-#replayBtn.show {
-  opacity: 1;
-  pointer-events: auto;
-}
+#replayBtn { margin-top:40px; font-size:1em; padding:12px 28px; border-radius:25px; background:#ff4d88; color:white; opacity:0; pointer-events:none; transition:opacity 2s ease; }
+#replayBtn.show { opacity:1; pointer-events:auto; }
 </style>
 </head>
 
 <body>
+
 <audio id="bgMusic" loop muted>
   <source src="music/song.mp3" type="audio/mpeg">
 </audio>
 
-<div id="mainContent" class="fade">
+<div id="mainContent">
   <div class="collage">
     <img src="images/pic1.jpg" onclick="openModal(this)">
     <img src="images/pic2.jpg" onclick="openModal(this)">
@@ -195,7 +63,6 @@ button:hover {
   </div>
 
   <h1 id="name"></h1>
-
   <h2>Will you be my Valentine?</h2>
 
   <button onclick="showFinal()">Yes</button>
@@ -210,10 +77,7 @@ button:hover {
 <div id="finalScreen">
   <h1 class="final-line">Happy Valentine’s Day, Hannah</h1>
   <p class="final-line">Every day with you is my favorite one.</p>
-  <p class="final-line">
-    I’m keeping my vow to love you more each and every day —
-    with intention, patience, and joy.
-  </p>
+  <p class="final-line">I’m keeping my vow to love you more each and every day — with intention, patience, and joy.</p>
   <p class="final-line">I choose you. Always.</p>
   <p class="final-wink">(Yes was the correct answer)</p>
   <button id="replayBtn" onclick="replay()">Replay</button>
@@ -224,7 +88,7 @@ button:hover {
 </div>
 
 <script>
-window.onload = function() {
+document.addEventListener("DOMContentLoaded", function() {
 
   // NAME FADE
   const nameText="Hannah Prillaman";
@@ -274,33 +138,37 @@ window.onload = function() {
   music.volume=0.25;
   music.play();
 
-  // NO BUTTON
+  // NO BUTTON SAFE RANDOM MOVE
   const noBtn=document.getElementById("noBtn");
   const mainContent=document.getElementById("mainContent");
-  const noBtnDefault={top:noBtn.offsetTop,left:noBtn.offsetLeft};
-  function moveNoBtn(){
-    const rect=mainContent.getBoundingClientRect();
-    const maxX=window.innerWidth-100;
-    const maxY=window.innerHeight-60;
-    let x=Math.random()*maxX;
-    let y=Math.random()*maxY;
+  let noBtnDefault={top:50,left:window.innerWidth/2-50}; 
+  noBtn.style.top=noBtnDefault.top+"px";
+  noBtn.style.left=noBtnDefault.left+"px";
+
+  noBtn.onmouseover=function(){
+    const margin=20;
+    const maxX=window.innerWidth-100-margin;
+    const maxY=window.innerHeight-60-margin;
+    const x=Math.random()*maxX+margin;
+    const y=Math.random()*maxY+margin;
     noBtn.style.left=x+"px";
     noBtn.style.top=y+"px";
-  }
-  noBtn.onmouseover=moveNoBtn;
+  };
 
   // FINAL SCREEN
   const finalScreen=document.getElementById("finalScreen");
   const replayBtn=document.getElementById("replayBtn");
   window.showFinal=function(){
     music.muted=false;
-    mainContent.style.opacity=0;
+    document.getElementById("mainContent").style.opacity=0;
     finalScreen.style.pointerEvents="auto";
     finalScreen.style.opacity=1;
+
     document.querySelectorAll(".final-line").forEach((l,i)=>{
       setTimeout(()=>l.classList.add("show"),i*800);
     });
     setTimeout(()=>document.querySelector(".final-wink").classList.add("show"),3200);
+
     replayBtn.classList.remove("show");
     setTimeout(()=>replayBtn.classList.add("show"),20000);
   };
@@ -309,13 +177,14 @@ window.onload = function() {
   window.replay=function(){
     finalScreen.style.opacity=0;
     finalScreen.style.pointerEvents="none";
-    mainContent.style.opacity=1;
+    document.getElementById("mainContent").style.opacity=1;
     document.querySelectorAll(".final-line,.final-wink").forEach(el=>el.classList.remove("show"));
+    // Reset no button
     noBtn.style.top=noBtnDefault.top+"px";
     noBtn.style.left=noBtnDefault.left+"px";
   };
 
-};
+});
 </script>
 </body>
 </html>
