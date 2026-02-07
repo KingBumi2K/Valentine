@@ -111,7 +111,7 @@ html, body {
 #finalImage { max-width:48%; max-height:45%; border-radius:18px; display:block; margin-top:10px; }
 
 /* Replay button hidden initially */
-#replayBtn { display:none; opacity:0; transition:opacity 1s ease; }
+#replayBtn { display:none; opacity:0; margin-top:24px; transition:opacity 1s ease; }
 #replayBtn.show { display:block; opacity:1; }
 </style>
 </head>
@@ -226,25 +226,44 @@ document.addEventListener("DOMContentLoaded", function(){
       return !(x+noBtn.offsetWidth<r.left||x>r.right||y+noBtn.offsetHeight<r.top||y>r.bottom);
     });
   }
-  noBtn.onmouseover=function(){
-    noBtn.style.position='absolute';
-    const margin=10;
-    const maxX=window.innerWidth - noBtn.offsetWidth - margin;
-    const maxY=window.innerHeight - noBtn.offsetHeight - margin;
-    let x,y,attempts=0;
-    do{
-      x = Math.random()*maxX;
-      y = Math.random()*maxY;
-      attempts++;
-    } while(overlaps(x,y) && attempts<100);
-    noBtn.style.left = x + 'px';
-    noBtn.style.top = y + 'px';
+  noBtn.onmouseover = function(){
+    const buttonGroup = document.querySelector(".button-group");
+    const countdownCard = document.getElementById("countdownCard");
+    const nameEl = document.getElementById("name");
+    const header = document.querySelector("h2");
+
+    const protectedElements = [document.querySelector(".collage"), countdownCard, buttonGroup, nameEl, header];
+
+    function overlaps(x, y) {
+        return protectedElements.some(el => {
+            const r = el.getBoundingClientRect();
+            return !(x + noBtn.offsetWidth < r.left ||
+                     x > r.right ||
+                     y + noBtn.offsetHeight < r.top ||
+                     y > r.bottom);
+        });
+    }
+
+    noBtn.style.position = 'absolute';
+    const margin = 10;
+    const maxX = window.innerWidth - noBtn.offsetWidth - margin;
+    const maxY = window.innerHeight - noBtn.offsetHeight - margin;
+    let x, y, attempts = 0;
+    do {
+        x = Math.random() * maxX;
+        y = Math.random() * maxY;
+        attempts++;
+    } while (overlaps(x, y) && attempts < 200);
+
+    noBtn.style.left = `${x}px`;
+    noBtn.style.top = `${y}px`;
     noBtn.classList.add("wiggle");
-    noBtn.addEventListener("animationend", function h(){
+    noBtn.addEventListener("animationend", function h() {
         noBtn.classList.remove("wiggle");
-        noBtn.removeEventListener("animationend",h);
+        noBtn.removeEventListener("animationend", h);
     });
-  }
+  };
+
 
   // Heart burst effect
   function heartBurst() {
@@ -280,7 +299,8 @@ document.addEventListener("DOMContentLoaded", function(){
     main.classList.remove("visible");
     final.classList.add("visible");
     finalLines.forEach((el,i)=>setTimeout(()=>el.classList.add("show"),i*800));
-    setTimeout(()=>finalImage.classList.add("show"),2400);
+    const imageDelay = finalLines.length * 800 + 600;
+    setTimeout(() => finalImage.classList.add("show"), imageDelay);
     heartBurst();
     replayBtn.classList.remove("show");
     setTimeout(()=>replayBtn.classList.add("show"), 20000); // replay delayed 20s
