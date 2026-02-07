@@ -278,8 +278,11 @@ noBtn.onmouseover = function() {
     const minX = margin;
     const maxX = window.innerWidth - noBtn.offsetWidth - margin;
 
+    // bottom boundary = top of countdown card minus margin
+    const countdownCard = document.getElementById("countdownCard");
+    const countdownTop = countdownCard.getBoundingClientRect().top;
     const minY = margin;
-    const maxY = window.innerHeight - noBtn.offsetHeight - margin;
+    const maxY = countdownTop - noBtn.offsetHeight - margin;
 
     let x, y, attempts = 0;
     do {
