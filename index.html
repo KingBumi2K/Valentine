@@ -87,10 +87,31 @@ h1 { font-size:3em; } h2 { font-size:2em; }
 .final-wink { opacity:0; font-size:1.1em; margin-top:30px; transition:opacity 2s ease; }
 .final-wink.show { opacity:0.7; }
 
-#finalImage { margin-top:30px; width:240px; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.2); }
+/* MATCH REPLAY BUTTON TO MAIN BUTTON STYLE */
+#replayBtn {
+  margin-top: 40px;
+  font-size: 1.1em;
+  padding: 14px 32px;
+  border-radius:28px;
+  border:none;
+  background: linear-gradient(145deg,#ff8ab8,#ff5a91);
+  color:white;
+  cursor:pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  opacity:0;
+  pointer-events:none;
+  transition: opacity 2s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+#replayBtn.show { 
+  opacity:1; 
+  pointer-events:auto; 
+}
+#replayBtn:hover {
+  transform: translateY(-2px);
+  box-shadow:0 6px 18px rgba(0,0,0,0.2);
+}
 
-#replayBtn { margin-top:40px; font-size:1em; padding:12px 28px; border-radius:25px; background:#ff8ab8; color:white; opacity:0; pointer-events:none; transition:opacity 2s ease; }
-#replayBtn.show { opacity:1; pointer-events:auto; }
+#finalImage { margin-top:30px; width:240px; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.2); }
 </style>
 </head>
 
@@ -172,21 +193,14 @@ document.addEventListener("DOMContentLoaded", function() {
     const h = document.createElement("div");
     h.className = "heart";
     h.textContent = "❤";
-
-    // Random horizontal position
     h.style.left = Math.random() * 100 + "vw";
-
-    // Random size
-    const size = 18 + Math.random() * 14; // 18px to 32px
+    const size = 18 + Math.random() * 14;
     h.style.fontSize = size + "px";
-
-    // Random animation duration and delay
-    const duration = 14 + Math.random() * 4; // 14-18s
+    const duration = 14 + Math.random() * 4;
     h.style.animationDuration = duration + "s";
     h.style.animationDelay = (Math.random() * 4) + "s";
-
     document.body.appendChild(h);
-    setTimeout(() => h.remove(), (duration+4)*1000); // remove after animation
+    setTimeout(() => h.remove(), (duration+4)*1000);
   }
   setInterval(createHeart, 1200);
 
@@ -201,34 +215,42 @@ document.addEventListener("DOMContentLoaded", function() {
   music.volume=0.25;
   music.play();
 
-  // SMART NO BUTTON WITH WIGGLE, constrained to viewport
-  const noBtn=document.getElementById("noBtn");
-  const collage=document.querySelector(".collage");
-  const countdownCard=document.getElementById("countdownCard");
+  // SMART NO BUTTON WITH WIGGLE, avoiding central elements
+  const noBtn = document.getElementById("noBtn");
+  const protectedElements = [
+    document.querySelector(".collage"),
+    document.getElementById("countdownCard"),
+    document.querySelector(".button-group"),
+    document.getElementById("name"),
+    document.querySelector("h2")
+  ];
 
-  noBtn.onmouseover=function(){
+  function overlapsProtected(x, y) {
+    return protectedElements.some(el => {
+      const rect = el.getBoundingClientRect();
+      return !(x + noBtn.offsetWidth < rect.left || x > rect.right || y + noBtn.offsetHeight < rect.top || y > rect.bottom);
+    });
+  }
+
+  noBtn.onmouseover = function() {
     noBtn.classList.add("hovered");
-    const margin=20;
-    const maxX=window.innerWidth - noBtn.offsetWidth - margin;
-    const maxY=window.innerHeight - noBtn.offsetHeight - margin;
+    const margin = 20;
+    const maxX = window.innerWidth - noBtn.offsetWidth - margin;
+    const maxY = window.innerHeight - noBtn.offsetHeight - margin;
 
-    let x, y, attempts=0;
+    let x, y, attempts = 0;
     do {
-      x=Math.random()*maxX + margin;
-      y=Math.random()*maxY + margin;
+      x = Math.random() * maxX + margin;
+      y = Math.random() * maxY + margin;
       attempts++;
-    } while ((x+noBtn.offsetWidth>collage.getBoundingClientRect().left && x<collage.getBoundingClientRect().right &&
-              y+noBtn.offsetHeight>collage.getBoundingClientRect().top && y<collage.getBoundingClientRect().bottom) ||
-             (x+noBtn.offsetWidth>countdownCard.getBoundingClientRect().left && x<countdownCard.getBoundingClientRect().right &&
-              y+noBtn.offsetHeight>countdownCard.getBoundingClientRect().top && y<countdownCard.getBoundingClientRect().bottom)
-             && attempts<50);
+    } while (overlapsProtected(x, y) && attempts < 100);
 
-    noBtn.style.left=x+"px";
-    noBtn.style.top=y+"px";
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
 
     // Wiggle
     noBtn.classList.add("wiggle");
-    noBtn.addEventListener("animationend", function handler(){
+    noBtn.addEventListener("animationend", function handler() {
       noBtn.classList.remove("wiggle");
       noBtn.removeEventListener("animationend", handler);
     });
@@ -262,7 +284,7 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("mainContent").style.opacity=1;
     document.querySelectorAll(".final-line,.final-wink, #finalImage").forEach(el=>el.classList.remove("show"));
     noBtn.classList.remove("hovered");
-    noBtn.style.left=""; // back to inline
+    noBtn.style.left=""; 
     noBtn.style.top="";
   };
 
