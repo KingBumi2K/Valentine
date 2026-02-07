@@ -38,7 +38,8 @@ html, body {
 /* Buttons */
 .button-group {
   display: flex;
-  justify-content: center; /* center all buttons as a group */
+  justify-content: center; /* center Yes and Obviously */
+  align-items: center;
   gap: 20px;
   margin-top: 20px;
   position: relative; /* container for No button */
@@ -57,13 +58,12 @@ html, body {
   transition: all 0.3s ease;
 }
 
-/* No button can move independently without breaking layout */
+/* No button moves independently */
 #noBtn {
-  position: absolute; /* move freely */
-  top: 0;
-  left: 50%; /* start near the center of button group */
-  transform: translateX(-50%);
-  transition: left 0.5s ease, top 0.5s ease;
+  position: absolute;
+  top: 0; /* initial top inside button group */
+  left: calc(100% + 20px); /* start to the right of the Yes/Obviously buttons */
+  transition: top 0.4s ease, left 0.4s ease; 
 }
 
 #noBtn.wiggle {
@@ -268,16 +268,23 @@ noBtn.onmouseover = function() {
     }
 
     const margin = 10;
-    const maxX = window.innerWidth - noBtn.offsetWidth - margin;
-    const maxY = window.innerHeight - noBtn.offsetHeight - margin;
+    const noBtnWidth = noBtn.offsetWidth;
+    const noBtnHeight = noBtn.offsetHeight;
+
+    // Define boundaries so No stays inside viewport
+    const maxX = window.innerWidth - noBtnWidth - margin;
+    const maxY = window.innerHeight - noBtnHeight - margin;
+    const minX = margin;
+    const minY = margin;
 
     let x, y, attempts = 0;
     do {
-        x = Math.random() * maxX;
-        y = Math.random() * maxY;
+        x = minX + Math.random() * (maxX - minX);
+        y = minY + Math.random() * (maxY - minY);
         attempts++;
     } while (overlaps(x, y) && attempts < 200);
 
+    // Move the No button smoothly
     noBtn.style.left = x + 'px';
     noBtn.style.top = y + 'px';
 
@@ -287,7 +294,6 @@ noBtn.onmouseover = function() {
         noBtn.removeEventListener("animationend", h);
     });
 };
-
 
   // Heart burst effect
   function heartBurst() {
