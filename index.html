@@ -50,20 +50,21 @@ html, body {
   background:linear-gradient(145deg,#ff8ab8,#ff5a91);
   color:white;
   cursor:pointer;
+  font-family:'Playfair Display', serif;
   box-shadow:0 4px 12px rgba(0,0,0,0.15);
   transition:all 0.3s ease;
 }
 .button-group button:hover, #startBtn:hover { transform:translateY(-2px); }
 
 #noBtn {
-  position:relative; /* start inline */
+  position:relative; 
   transition:left 0.5s ease, top 0.5s ease;
 }
 #noBtn.wiggle { animation: wiggle 0.5s ease; }
 @keyframes wiggle {0%{transform:translateX(0);}25%{transform:translateX(-6px);}50%{transform:translateX(6px);}75%{transform:translateX(-4px);}100%{transform:translateX(0);}}
 
 /* Countdown */
-#countdownCard { margin-top:20px; padding:20px 30px; max-width:380px; background:rgba(255,255,255,0.7); border-radius:25px; box-shadow:0 10px 25px rgba(0,0,0,0.1); font-size:1.2em; }
+#countdownCard { margin-top:20px; padding:20px 30px; max-width:380px; background:rgba(255,255,255,0.7); border-radius:25px; box-shadow:0 10px 25px rgba(0,0,0,0.1); font-size:1.2em; font-family:'Inter',sans-serif; }
 
 /* Hearts */
 .heart {
@@ -73,7 +74,7 @@ html, body {
   color:#ff99cc;
   opacity:0.7;
   pointer-events:none;
-  animation:floatUp 16s linear forwards;
+  animation:floatUp 18s linear infinite;
   z-index:1;
 }
 @keyframes floatUp {0%{transform:translateY(0) rotate(0deg); opacity:0.7;}50%{transform:translateY(-60vh) rotate(10deg);}100%{transform:translateY(-120vh) rotate(-10deg); opacity:0;}}
@@ -82,6 +83,8 @@ html, body {
 #name span {
   opacity:0;
   display:inline-block;
+  font-family:'Playfair Display', serif;
+  font-size:2em;
   transform: translateY(10px);
   transition: opacity 0.5s ease, transform 0.5s ease;
 }
@@ -91,7 +94,7 @@ html, body {
 }
 
 /* Final Page */
-#finalPage {display:flex; flex-direction:column; justify-content:flex-start; align-items:center; text-align:center; padding:40px 20px; gap:15px;}
+#finalPage {display:flex; flex-direction:column; justify-content:flex-start; align-items:center; text-align:center; padding:40px 20px; gap:15px; font-family:'Playfair Display', serif;}
 .final-line, #finalImage { opacity:0; transform:translateY(10px); transition:opacity 1.2s ease, transform 1.2s ease; }
 .final-line.show, #finalImage.show { opacity:1; transform:translateY(0); }
 .final-wink { opacity:0; font-size:1.1em; margin-top:20px; transition: opacity 2s ease; }
@@ -131,7 +134,7 @@ html, body {
     <img src="images/pic6.jpg" onclick="openModal(this)">
   </div>
   <h1 id="name"></h1>
-  <h2>Hannah Prillaman, will you be my Valentine?</h2>
+  <h2>Will you be my Valentine?</h2>
   <div class="button-group">
     <button id="yesBtn">Yes</button>
     <button id="obviouslyBtn">Obviously</button>
@@ -158,7 +161,9 @@ html, body {
   <img id="modalImg">
 </div>
 
-<!-- Hearts -->
+<!-- Floating Hearts -->
+<div class="heart">❤</div>
+<div class="heart">❤</div>
 <div class="heart">❤</div>
 <div class="heart">❤</div>
 <div class="heart">❤</div>
@@ -238,6 +243,35 @@ document.addEventListener("DOMContentLoaded", function(){
     document.getElementById("modalImg").src=img.src;
   }
 
+  // Heart burst effect for final page
+  function heartBurst() {
+      const count = 25;
+      for (let i = 0; i < count; i++) {
+          const heart = document.createElement('div');
+          heart.className = 'heart';
+          heart.style.fontSize = (10 + Math.random()*20) + 'px';
+          heart.style.left = (50 + Math.random()*20 - 10) + '%';
+          heart.style.bottom = '20%';
+          heart.style.opacity = 0.8;
+          heart.style.position = 'absolute';
+          heart.style.color = '#ff99cc';
+          heart.style.pointerEvents = 'none';
+          heart.style.transform = `rotate(${Math.random()*360}deg)`;
+          final.appendChild(heart);
+          
+          let top = 20;
+          const interval = setInterval(() => {
+              top += 1 + Math.random()*2;
+              heart.style.bottom = top + '%';
+              heart.style.opacity -= 0.02;
+              if (heart.style.opacity <= 0) {
+                  heart.remove();
+                  clearInterval(interval);
+              }
+          }, 30);
+      }
+  }
+
   // Show final
   function showFinal(){
     main.classList.remove("visible");
@@ -245,6 +279,7 @@ document.addEventListener("DOMContentLoaded", function(){
     finalLines.forEach((el,i)=>setTimeout(()=>el.classList.add("show"),i*800));
     setTimeout(()=>finalImage.classList.add("show"),2400);
     setTimeout(()=>document.querySelector(".final-wink").classList.add("show"),3200);
+    heartBurst(); // trigger magical heart burst
     replayBtn.classList.remove("show");
     setTimeout(()=>replayBtn.classList.add("show"),20000);
   }
