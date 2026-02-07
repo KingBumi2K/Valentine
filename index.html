@@ -2,11 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Valentine's Surprise</title>
+<title>Valentine Surprise</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-/* --- BASE STYLES --- */
-body, html {
+html, body {
   margin:0; padding:0;
   height:100%; width:100%;
   font-family:'Inter', sans-serif;
@@ -14,70 +13,68 @@ body, html {
   background: linear-gradient(135deg, #ffe6f0 0%, #ffd6e8 40%, #ffc0d9 70%, #ffb3cc 100%);
 }
 
-/* HEADERS */
-h1,h2 { font-family:'Playfair Display', serif; margin:0 0 20px 0; text-align:center; }
-h1 { font-size:3em; }
-h2 { font-size:2em; }
-
-/* PAGE CONTAINERS */
+/* PAGE STYLING */
 .page {
-  display:flex; /* always exists */
+  display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  height:100vh; width:100vw;
+  height:100vh;
+  width:100vw;
   text-align:center;
   padding:20px;
   box-sizing:border-box;
-  opacity:0;                /* start invisible */
-  transition: opacity 1s ease;
-  pointer-events:none;      /* prevent interaction until visible */
+  opacity:0;
+  transition:opacity 1s ease;
+  pointer-events:none;
 }
-.page.show {
-  opacity:1;
-  pointer-events:auto;      /* enable interaction after fade-in */
+.page.active {opacity:1; pointer-events:auto;}
+
+/* BUTTONS */
+button {
+  padding:14px 32px;
+  font-size:1.1em;
+  border-radius:28px;
+  border:none;
+  background: linear-gradient(145deg,#ff8ab8,#ff5a91);
+  color:white;
+  cursor:pointer;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
 }
+button:hover {transform:translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2);}
 
 /* COLLAGE */
 .collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-top:20px; margin-bottom:30px; }
 .collage img { width:140px; height:140px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); cursor:pointer; }
 
-/* BUTTONS */
-.button-group { display:flex; justify-content:center; gap:16px; margin:30px 0; }
-button { padding:14px 32px; font-size:1.1em; border-radius:28px; border:none; background: linear-gradient(145deg,#ff8ab8,#ff5a91); color:white; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease; }
-button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2); }
-
 /* NO BUTTON */
-#noBtn { transition: left 0.5s ease, top 0.5s ease; }
+#noBtn { transition:left 0.5s ease, top 0.5s ease; position:relative; }
 @keyframes wiggle {0%{transform:translateX(0);}25%{transform:translateX(-6px);}50%{transform:translateX(6px);}75%{transform:translateX(-4px);}100%{transform:translateX(0);}}
 #noBtn.wiggle { animation: wiggle 0.5s ease; }
 
-/* COUNTDOWN CARD */
+/* COUNTDOWN */
 #countdownCard { margin-top:20px; padding:25px 40px; max-width:420px; background:rgba(255,255,255,0.7); border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); font-size:1.3em; }
 
 /* HEARTS */
-.heart { position: fixed; bottom:-40px; font-size: 20px; color:#ff99cc; opacity:0.7; pointer-events:none; animation:floatUp 16s linear forwards; transform-origin:center; }
-@keyframes floatUp {0%{transform:translateY(0) rotate(0deg); opacity:0.7;}25%{transform:translateY(-25vh) rotate(10deg);}50%{transform:translateY(-60vh) rotate(-10deg); opacity:0.85;}75%{transform:translateY(-90vh) rotate(5deg);}100%{transform:translateY(-120vh) rotate(-5deg); opacity:0;}}
+.heart { position:fixed; bottom:-40px; font-size:20px; color:#ff99cc; opacity:0.7; pointer-events:none; animation:floatUp 16s linear forwards; }
+@keyframes floatUp {0%{transform:translateY(0) rotate(0deg); opacity:0.7;}50%{transform:translateY(-60vh) rotate(10deg);}100%{transform:translateY(-120vh) rotate(-10deg); opacity:0;}}
 
 /* FINAL SCREEN */
-#finalScreen {
-  display:flex; flex-direction:column; justify-content:flex-start; align-items:center;
-  height:100vh; width:100vw; text-align:center; padding-top:60px; box-sizing:border-box;
-}
-.final-line, #finalImage { opacity:0; transform:translateY(10px); transition: opacity 1.2s ease, transform 1.2s ease; }
+#finalScreen {display:flex; flex-direction:column; justify-content:flex-start; align-items:center; height:100vh; width:100vw; text-align:center; padding-top:60px; box-sizing:border-box;}
+.final-line, #finalImage { opacity:0; transform:translateY(10px); transition:opacity 1.2s ease, transform 1.2s ease; }
 .final-line.show, #finalImage.show { opacity:1; transform:translateY(0); }
 .final-wink { opacity:0; font-size:1.1em; margin-top:30px; transition: opacity 2s ease; }
 .final-wink.show { opacity:0.7; }
 #finalImage { max-width:60%; max-height:50%; margin-top:20px; border-radius:18px; display:block; }
 
-/* REPLAY BUTTON */
+/* REPLAY */
 #replayBtn { margin-top:40px; opacity:0; pointer-events:none; transition: opacity 2s ease; }
 #replayBtn.show { opacity:1; pointer-events:auto; }
 
 /* MODAL */
 #modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; }
 #modal img { max-width:85%; max-height:85%; border-radius:20px; }
-
 </style>
 </head>
 <body>
@@ -87,8 +84,8 @@ button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2
 </audio>
 
 <!-- SPLASH PAGE -->
-<div id="splashPage" class="page" style="display:flex;">
-  <button id="startBtn">Touch me</button>
+<div id="splashPage" class="page active">
+  <button id="startBtn">Touch Me</button>
 </div>
 
 <!-- MAIN PAGE -->
@@ -129,44 +126,44 @@ button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2
   <img id="modalImg">
 </div>
 
+<!-- HEARTS -->
+<div class="heart">❤</div>
+<div class="heart">❤</div>
+<div class="heart">❤</div>
+
 <script>
 document.addEventListener("DOMContentLoaded", function(){
 
-  const music = document.getElementById("bgMusic");
   const splash = document.getElementById("splashPage");
   const main = document.getElementById("mainContent");
   const final = document.getElementById("finalScreen");
   const startBtn = document.getElementById("startBtn");
+  const music = document.getElementById("bgMusic");
+  const noBtn = document.getElementById("noBtn");
 
-  splash.style.display="flex";
-
-  // Animate name
   function animateName() {
     const nameText = "Hannah Prillaman";
-    const name = document.getElementById("name");
-    name.innerHTML = "";
-    nameText.split("").forEach((c, i) => {
+    const nameEl = document.getElementById("name");
+    nameEl.innerHTML = "";
+    nameText.split("").forEach((c,i)=>{
       const s = document.createElement("span");
       s.textContent = c;
-      s.style.opacity = 0;
-      s.style.transition = "opacity 0.6s ease";
-      setTimeout(() => s.style.opacity = 1, i * 180);
-      name.appendChild(s);
+      s.style.opacity=0;
+      s.style.transition="opacity 0.6s ease";
+      setTimeout(()=>s.style.opacity=1,i*180);
+      nameEl.appendChild(s);
     });
   }
 
-  // Touch Me click
-  startBtn.onclick = function() {
-    splash.style.display = "none";
-    main.style.display = "flex";
-    setTimeout(()=>main.classList.add("show"), 20); // trigger fade-in
-    music.volume = 0.25;
-    music.play();
-    animateName(); // animate name after page visible
-  };
+  startBtn.onclick=function(){
+    splash.classList.remove("active");
+    main.classList.add("active");
+    music.volume=0.25; music.play();
+    animateName();
+  }
 
-  // Countdown with days
-  const countdown=document.getElementById("countdown");
+  // Countdown
+  const countdown = document.getElementById("countdown");
   function updateCountdown(){
     const now=new Date();
     const target=new Date(new Date().getFullYear(),1,14);
@@ -180,33 +177,9 @@ document.addEventListener("DOMContentLoaded", function(){
   setInterval(updateCountdown,1000);
   updateCountdown();
 
-  // Hearts
-  function createHeart(){
-    const h=document.createElement("div");
-    h.className="heart";
-    h.textContent="❤";
-    h.style.left=Math.random()*100+"vw";
-    const size=18+Math.random()*14;
-    h.style.fontSize=size+"px";
-    const duration=14+Math.random()*4;
-    h.style.animationDuration=duration+"s";
-    h.style.animationDelay=Math.random()*4+"s";
-    document.body.appendChild(h);
-    setTimeout(()=>h.remove(),(duration+4)*1000);
-  }
-  setInterval(createHeart,1200);
-
-  // Modal
-  window.openModal=function(img){
-    const modal=document.getElementById("modal");
-    modal.style.display="flex";
-    document.getElementById("modalImg").src=img.src;
-  };
-
-  // No button hover
-  const noBtn = document.getElementById("noBtn");
+  // No button movement
   const protectedElements = [document.querySelector(".collage"), document.getElementById("countdownCard"), document.querySelector(".button-group"), document.getElementById("name"), document.querySelector("h2")];
-  function overlapsProtected(x,y){
+  function overlaps(x,y){
     return protectedElements.some(el=>{
       const r=el.getBoundingClientRect();
       return !(x+noBtn.offsetWidth<r.left || x>r.right || y+noBtn.offsetHeight<r.top || y>r.bottom);
@@ -217,39 +190,39 @@ document.addEventListener("DOMContentLoaded", function(){
     const maxX=window.innerWidth-noBtn.offsetWidth-margin;
     const maxY=window.innerHeight-noBtn.offsetHeight-margin;
     let x,y,attempts=0;
-    do{
-      x=Math.random()*maxX+margin;
-      y=Math.random()*maxY+margin;
-      attempts++;
-    } while(overlapsProtected(x,y)&&attempts<100);
-    noBtn.style.position="absolute";
-    noBtn.style.left=x+"px";
-    noBtn.style.top=y+"px";
+    do{x=Math.random()*maxX+margin; y=Math.random()*maxY+margin; attempts++;} while(overlaps(x,y)&&attempts<100);
+    noBtn.style.left=x+'px'; noBtn.style.top=y+'px';
     noBtn.classList.add("wiggle");
-    noBtn.addEventListener("animationend", function h(){ noBtn.classList.remove("wiggle"); noBtn.removeEventListener("animationend", h); });
+    noBtn.addEventListener("animationend", function h(){ noBtn.classList.remove("wiggle"); noBtn.removeEventListener("animationend",h); });
   };
 
-  // Final screen
+  // Modal
+  window.openModal=function(img){
+    const modal=document.getElementById("modal");
+    modal.style.display="flex";
+    document.getElementById("modalImg").src=img.src;
+  }
+
+  // Final page
   const replayBtn=document.getElementById("replayBtn");
   const finalImage=document.getElementById("finalImage");
   window.showFinal=function(){
-    main.style.display="none";
-    final.style.display="flex";
-
+    main.classList.remove("active");
+    final.classList.add("active");
     const elements=[...document.querySelectorAll(".final-line"), finalImage];
     elements.forEach((el,i)=>setTimeout(()=>el.classList.add("show"),i*800));
     setTimeout(()=>document.querySelector(".final-wink").classList.add("show"),3200);
     replayBtn.classList.remove("show");
     setTimeout(()=>replayBtn.classList.add("show"),20000);
-  };
+  }
 
   // Replay
   window.replay=function(){
-    final.style.display="none";
-    main.style.display="flex";
+    final.classList.remove("active");
+    main.classList.add("active");
     document.querySelectorAll(".final-line,.final-wink,#finalImage").forEach(el=>el.classList.remove("show"));
     noBtn.style.left=""; noBtn.style.top="";
-  };
+  }
 
 });
 </script>
