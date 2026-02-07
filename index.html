@@ -255,59 +255,47 @@ noBtn.style.left = (ghostRect.left - parentRect.left) + 'px';
 noBtn.style.top = (ghostRect.top - parentRect.top) + 'px';
 
 // No button hover movement
-noBtn.onmouseover = function() {
-    const protectedElements = [
-        document.querySelector(".collage"),
-        document.getElementById("countdownCard"),
-        document.getElementById("name"),
-        document.querySelector("h2"),
-        document.querySelector(".button-group")
-    ];
-
-    // Helper to check overlap
-    function overlaps(x, y) {
-        return protectedElements.some(el => {
-            const r = el.getBoundingClientRect();
-            return !(x + noBtn.offsetWidth < r.left ||
-                     x > r.right ||
-                     y + noBtn.offsetHeight < r.top ||
-                     y > r.bottom);
-        });
-    }
-
-    const margin = 10;
+noBtn.onmouseover = function(firstHover = false) {
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
+    const margin = 10;
 
-    // Calculate max X/Y so button stays inside viewport
-    const maxX = window.innerWidth - btnWidth - margin;
-    const maxY = window.innerHeight - btnHeight - margin;
+    // Hard horizontal boundaries
     const minX = margin;
+    const maxX = window.innerWidth - btnWidth - margin;
+
+    // Hard vertical boundaries
+    const countdown = document.getElementById("countdownCard");
+    const countdownRect = countdown.getBoundingClientRect();
+
+    // If first hover, restrict Y to top half
     const minY = margin;
+    const maxY = firstHover
+        ? window.innerHeight / 2 - btnHeight - margin
+        : countdownRect.top - btnHeight - margin; // never below countdown
 
-    let x, y, attempts = 0;
+    let x = minX + Math.random() * (maxX - minX);
+    let y = minY + Math.random() * (maxY - minY);
 
-    do {
-        x = minX + Math.random() * (maxX - minX);
-        y = minY + Math.random() * (maxY - minY);
-        attempts++;
-    } while (overlaps(x, y) && attempts < 500); // try 500 times to avoid overlaps
-
-    // Clamp to ensure stays within viewport
-    x = Math.max(minX, Math.min(x, maxX));
-    y = Math.max(minY, Math.min(y, maxY));
-
-    // Move smoothly
+    // Move button
     noBtn.style.left = x + 'px';
     noBtn.style.top = y + 'px';
 
-    // Add wiggle animation
+    // Wiggle animation
     noBtn.classList.add("wiggle");
     noBtn.addEventListener("animationend", function h() {
         noBtn.classList.remove("wiggle");
         noBtn.removeEventListener("animationend", h);
     });
 };
+
+// Example: mark first hover
+let noHovered = false;
+noBtn.addEventListener("mouseover", function() {
+    noBtn.onmouseover(!noHovered);
+    noHovered = true;
+});
+
 
   // Heart burst effect
   function heartBurst() {
