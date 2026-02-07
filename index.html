@@ -200,14 +200,81 @@ document.addEventListener("DOMContentLoaded", function(){
 
   let firstHover = true;
 
-  // Splash click
+  // --- 1. POSITIONING LOGIC ---
+  function resetNoButton() {
+    firstHover = true;
+    noBtn.style.transition = "none"; 
+    noBtn.style.position = "absolute";
+    // Align with ghost button inside the relative .button-group container
+    noBtn.style.left = ghostBtn.offsetLeft + "px";
+    noBtn.style.top = ghostBtn.offsetTop + "px";
+    noBtn.offsetHeight; // Force reflow
+    noBtn.style.transition = "left 0.4s ease, top 0.4s ease";
+  }
+
+  // Initial placement
+  resetNoButton();
+
+  // --- 2. COLLISION DETECTION ---
+  function getProtectedRects() {
+    // Elements the No button should never cover
+    const selectors = [".collage", "#name", "h2", ".button-group", "#countdownCard"];
+    return selectors.map(s => document.querySelector(s).getBoundingClientRect());
+  }
+
+  function overlaps(x, y, w, h, rects) {
+    return rects.some(r => {
+      return !(x + w < r.left || x > r.right || y + h < r.top || y > r.bottom);
+    });
+  }
+
+  noBtn.addEventListener("mouseover", () => {
+    const btnWidth = noBtn.offsetWidth;
+    const btnHeight = noBtn.offsetHeight;
+    const padding = 20;
+    const rects = getProtectedRects();
+
+    if (firstHover) {
+      // Transition from absolute (container-based) to fixed (screen-based)
+      const rect = noBtn.getBoundingClientRect();
+      noBtn.style.position = 'fixed';
+      noBtn.style.left = rect.left + 'px';
+      noBtn.style.top = rect.top + 'px';
+      firstHover = false;
+    }
+
+    let newX, newY;
+    let attempts = 0;
+    let foundSpot = false;
+
+    // Try to find a spot that doesn't overlap (max 50 attempts)
+    while (!foundSpot && attempts < 50) {
+      newX = Math.random() * (window.innerWidth - btnWidth - padding);
+      newY = Math.random() * (window.innerHeight - btnHeight - padding);
+      
+      if (!overlaps(newX, newY, btnWidth, btnHeight, rects)) {
+        foundSpot = true;
+      }
+      attempts++;
+    }
+
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top = newY + 'px';
+
+    noBtn.classList.add("wiggle");
+    setTimeout(() => noBtn.classList.remove("wiggle"), 500);
+  });
+
+  // --- 3. PAGE FLOW & ANIMATION ---
   startBtn.onclick = function(){
     splash.classList.remove("visible");
     main.classList.add("visible");
     music.volume = 0.25;
     music.play();
+    animateName();
+  };
 
-    // Animate name
+  function animateName() {
     const name = "Hannah Prillaman";
     nameContainer.innerHTML = "";
     name.split("").forEach((letter, index) => {
@@ -216,12 +283,50 @@ document.addEventListener("DOMContentLoaded", function(){
       nameContainer.appendChild(span);
       setTimeout(() => span.classList.add("show"), index * 150);
     });
+  }
+
+  function showFinal(){
+    main.classList.remove("visible");
+    final.classList.add("visible");
+    
+    // Text lines sequence
+    finalLines.forEach((el, i) => {
+        setTimeout(() => el.classList.add("show"), i * 800);
+    });
+
+    // Image appears just after the last line (2400ms + 400ms)
+    const imageDelay = (finalLines.length - 1) * 800 + 400;
+    setTimeout(() => finalImage.classList.add("show"), imageDelay);
+    
+    // Replay button appears 15 seconds after the final content is shown
+    setTimeout(() => {
+        replayBtn.classList.add("show");
+    }, imageDelay + 15000);
+
+    heartBurst();
+  }
+
+  // --- 4. REPLAY & RESET ---
+  window.replay = function(){
+    final.classList.remove("visible");
+    main.classList.add("visible");
+    
+    // Reset final page states
+    finalLines.forEach(el => el.classList.remove("show"));
+    finalImage.classList.remove("show");
+    replayBtn.classList.remove("show");
+    
+    // Reset No Button to its original spot on the ghost button
+    resetNoButton();
+    
+    // Restart name animation
+    animateName();
   };
 
-  // Countdown Logic
+  // --- 5. UTILS (Countdown & Hearts) ---
   function updateCountdown(){
     const now = new Date();
-    const target = new Date(now.getFullYear(), 1, 14); // Feb 14
+    const target = new Date(now.getFullYear(), 1, 14);
     const diff = Math.max(target - now, 0);
     const d = Math.floor(diff / 86400000);
     const h = Math.floor((diff % 86400000) / 3600000);
@@ -232,59 +337,22 @@ document.addEventListener("DOMContentLoaded", function(){
   setInterval(updateCountdown, 1000);
   updateCountdown();
 
-  // Floating hearts
-  document.querySelectorAll('.heart').forEach(h => {
-      h.style.left = Math.random() * 90 + 'vw';
-      h.style.animation = `floatUp ${15 + Math.random() * 10}s linear infinite`;
-  });
-
-  // --- FIXED NO BUTTON LOGIC ---
-  noBtn.addEventListener("mouseover", () => {
-    const btnWidth = noBtn.offsetWidth;
-    const btnHeight = noBtn.offsetHeight;
-    const padding = 20;
-
-    if (firstHover) {
-      // On first hover, detach from the flexbox flow
-      const rect = noBtn.getBoundingClientRect();
-      noBtn.style.position = 'fixed';
-      noBtn.style.left = rect.left + 'px';
-      noBtn.style.top = rect.top + 'px';
-      firstHover = false;
-    }
-
-    // Calculate random position within the viewport
-    const maxX = window.innerWidth - btnWidth - padding;
-    const maxY = window.innerHeight - btnHeight - padding;
-
-    const newX = Math.random() * maxX;
-    const newY = Math.random() * maxY;
-
-    noBtn.style.left = newX + 'px';
-    noBtn.style.top = newY + 'px';
-
-    // Wiggle effect
-    noBtn.classList.add("wiggle");
-    setTimeout(() => noBtn.classList.remove("wiggle"), 500);
-  });
-
-  // Heart burst effect
   function heartBurst() {
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < 15; i++) {
       const heart = document.createElement('div');
       heart.className = 'heart';
       heart.innerHTML = '❤';
-      heart.style.left = (40 + Math.random() * 20) + '%';
-      heart.style.bottom = '20%';
+      heart.style.left = (Math.random() * 100) + 'vw';
+      heart.style.bottom = '-5vh';
       heart.style.position = 'fixed';
-      final.appendChild(heart);
+      document.body.appendChild(heart);
       
-      let bottom = 20;
+      let bottom = -5;
       const interval = setInterval(() => {
-        bottom += 1;
-        heart.style.bottom = bottom + '%';
-        heart.style.opacity = (100 - bottom) / 50;
-        if (bottom > 90) {
+        bottom += 0.5;
+        heart.style.bottom = bottom + 'vh';
+        heart.style.opacity = (100 - bottom) / 100;
+        if (bottom > 100) {
           heart.remove();
           clearInterval(interval);
         }
@@ -292,22 +360,9 @@ document.addEventListener("DOMContentLoaded", function(){
     }
   }
 
-  function showFinal(){
-    main.classList.remove("visible");
-    final.classList.add("visible");
-    finalLines.forEach((el, i) => setTimeout(() => el.classList.add("show"), i * 800));
-    setTimeout(() => finalImage.classList.add("show"), (finalLines.length * 800) + 600);
-    heartBurst();
-    setTimeout(() => replayBtn.classList.add("show"), 5000); // Reduced delay for testing
-  }
-
   document.getElementById("yesBtn").onclick = showFinal;
   document.getElementById("obviouslyBtn").onclick = showFinal;
   noBtn.onclick = showFinal;
-
-  window.replay = function(){
-    location.reload(); // Simplest way to reset all states and animations
-  };
 });
 </script>
 </body>
