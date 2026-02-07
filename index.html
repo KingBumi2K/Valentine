@@ -19,7 +19,8 @@ h1 { font-size:3em; }
 h2 { font-size:2em; }
 
 /* PAGE CONTAINERS */
-.page { display:none; flex-direction:column; justify-content:center; align-items:center; height:100vh; width:100vw; text-align:center; padding:20px; box-sizing:border-box; }
+.page { display:none; flex-direction:column; justify-content:center; align-items:center; height:100vh; width:100vw; text-align:center; padding:20px; box-sizing:border-box; opacity:0; transition: opacity 1s ease; }
+.page.show { opacity:1; }
 
 /* COLLAGE */
 .collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-top:20px; margin-bottom:30px; }
@@ -30,7 +31,8 @@ h2 { font-size:2em; }
 button { padding:14px 32px; font-size:1.1em; border-radius:28px; border:none; background: linear-gradient(145deg,#ff8ab8,#ff5a91); color:white; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease; }
 button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2); }
 
-/* NO BUTTON WIGGLE */
+/* NO BUTTON WIGGLE + smooth movement */
+#noBtn { transition: left 0.5s ease, top 0.5s ease; }
 @keyframes wiggle {0%{transform:translateX(0);}25%{transform:translateX(-6px);}50%{transform:translateX(6px);}75%{transform:translateX(-4px);}100%{transform:translateX(0);}}
 #noBtn.wiggle { animation: wiggle 0.5s ease; }
 
@@ -121,27 +123,32 @@ document.addEventListener("DOMContentLoaded", function(){
 
   splash.style.display="flex";
 
-  // Start button
-  startBtn.onclick = function(){
-    splash.style.display="none";
-    main.style.display="flex";
+  // Animate name function
+  function animateName() {
+    const nameText = "Hannah Prillaman";
+    const name = document.getElementById("name");
+    name.innerHTML = "";
+    nameText.split("").forEach((c, i) => {
+      const s = document.createElement("span");
+      s.textContent = c;
+      s.style.opacity = 0;
+      s.style.transition = "opacity 0.6s ease";
+      setTimeout(() => s.style.opacity = 1, i * 180); // slower full name
+      name.appendChild(s);
+    });
+  }
+
+  // Start button click
+  startBtn.onclick = function() {
+    splash.style.display = "none";
+    main.style.display = "flex";
+    setTimeout(()=>main.classList.add("show"),10); // fade-in
     music.volume = 0.25;
     music.play();
+    animateName(); // triggers name animation
   };
 
-  // Name fade in
-  const nameText="Hannah Prillaman";
-  const name=document.getElementById("name");
-  nameText.split("").forEach((c,i)=>{
-    const s=document.createElement("span");
-    s.textContent=c;
-    s.style.opacity=0;
-    s.style.transition="opacity 0.6s ease";
-    setTimeout(()=>s.style.opacity=1,i*120);
-    name.appendChild(s);
-  });
-
-  // Countdown with DAYS
+  // Countdown with days
   const countdown=document.getElementById("countdown");
   function updateCountdown(){
     const now=new Date();
@@ -179,7 +186,7 @@ document.addEventListener("DOMContentLoaded", function(){
     document.getElementById("modalImg").src=img.src;
   };
 
-  // No button
+  // No button hover
   const noBtn = document.getElementById("noBtn");
   const protectedElements = [document.querySelector(".collage"), document.getElementById("countdownCard"), document.querySelector(".button-group"), document.getElementById("name"), document.querySelector("h2")];
   function overlapsProtected(x,y){
