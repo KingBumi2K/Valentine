@@ -2,19 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Valentine Surprise</title>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+<title>Valentine Test</title>
 <style>
 html, body {
   margin:0; padding:0;
-  height:100%; width:100%;
-  font-family:'Inter', sans-serif;
+  width:100%; height:100%;
+  font-family:Arial, sans-serif;
   overflow:hidden;
-  background: linear-gradient(135deg, #ffe6f0 0%, #ffd6e8 40%, #ffc0d9 70%, #ffb3cc 100%);
-  position:relative;
 }
 
-/* --- Pages --- */
+/* Pages */
 .page {
   position:absolute;
   top:0; left:0;
@@ -23,80 +20,56 @@ html, body {
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  text-align:center;
-  padding:20px;
-  box-sizing:border-box;
   opacity:0;
-  transition:opacity 1s ease;
+  transition:opacity 0.5s ease;
 }
-.page.visible { opacity:1; z-index:3; }
-
-/* Splash */
-#splashPage { z-index:4; }
-
-/* Collage */
-.collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-bottom:30px; }
-.collage img { width:140px; height:140px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); cursor:pointer; }
+.page.visible { opacity:1; z-index:2; }
 
 /* Buttons */
 .button-group {
   display:flex;
-  justify-content:center;
-  align-items:center;
   gap:20px;
-  margin-top:30px;
-  position:relative; /* For No button absolute positioning */
+  margin-top:20px;
+  position:relative; /* for No button */
 }
-.button-group button:not(#noBtn) {
-  flex:0 0 auto;
-}
-.button-group button, #startBtn, #replayBtn {
-  padding:14px 32px;
-  border-radius:28px;
+.button-group button {
+  padding:10px 25px;
   border:none;
-  font-size:1.1em;
-  background:linear-gradient(145deg,#ff8ab8,#ff5a91);
+  border-radius:20px;
+  background:#ff69b4;
   color:white;
+  font-size:1em;
   cursor:pointer;
-  box-shadow:0 4px 12px rgba(0,0,0,0.15);
-  transition: all 0.3s ease;
+  transition:transform 0.2s;
 }
-.button-group button:hover, #startBtn:hover, #replayBtn:hover { transform:translateY(-2px); }
+.button-group button:hover { transform:translateY(-2px); }
 
-/* No Button */
-#noBtn { position:absolute; left:0; top:0; transition:left 0.5s ease, top 0.5s ease; }
-@keyframes wiggle {0%{transform:translateX(0);}25%{transform:translateX(-6px);}50%{transform:translateX(6px);}75%{transform:translateX(-4px);}100%{transform:translateX(0);}}
-#noBtn.wiggle { animation: wiggle 0.5s ease; }
+#noBtn {
+  position:absolute;
+  left:0; top:0;
+  transition:left 0.3s, top 0.3s;
+}
 
-/* Countdown */
-#countdownCard { margin-top:20px; padding:25px 40px; max-width:420px; background:rgba(255,255,255,0.7); border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); font-size:1.3em; }
-
-/* Hearts */
-.heart { position:fixed; bottom:-40px; font-size:20px; color:#ff99cc; opacity:0.7; pointer-events:none; animation:floatUp 16s linear forwards; z-index:1;}
-@keyframes floatUp {0%{transform:translateY(0) rotate(0deg); opacity:0.7;}50%{transform:translateY(-60vh) rotate(10deg);}100%{transform:translateY(-120vh) rotate(-10deg); opacity:0;}}
-
-/* Final Screen */
-#finalScreen {display:flex; flex-direction:column; justify-content:flex-start; align-items:center; text-align:center; padding-top:60px; box-sizing:border-box;}
-.final-line, #finalImage { opacity:0; transform:translateY(10px); transition:opacity 1.2s ease, transform 1.2s ease; }
-.final-line.show, #finalImage.show { opacity:1; transform:translateY(0); }
-.final-wink { opacity:0; font-size:1.1em; margin-top:30px; transition: opacity 2s ease; }
-.final-wink.show { opacity:0.7; }
-#finalImage { max-width:60%; max-height:50%; margin-top:20px; border-radius:18px; display:block; }
-
-/* Replay */
-#replayBtn { margin-top:40px; opacity:0; pointer-events:none; transition: opacity 2s ease; }
+/* Final page styling */
+#finalPage {
+  text-align:center;
+  padding:30px;
+}
+.final-line {
+  opacity:0;
+  transition: opacity 1s ease;
+}
+.final-line.show { opacity:1; }
+#replayBtn {
+  margin-top:20px;
+  opacity:0;
+  pointer-events:none;
+  transition: opacity 1s ease;
+}
 #replayBtn.show { opacity:1; pointer-events:auto; }
-
-/* Modal */
-#modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; }
-#modal img { max-width:85%; max-height:85%; border-radius:20px; }
 </style>
 </head>
 <body>
-
-<audio id="bgMusic" loop>
-  <source src="music/song.mp3" type="audio/mpeg">
-</audio>
 
 <!-- Splash -->
 <div id="splashPage" class="page visible">
@@ -104,145 +77,80 @@ html, body {
 </div>
 
 <!-- Main -->
-<div id="mainContent" class="page">
-  <div class="collage">
-    <img src="images/pic1.jpg" onclick="openModal(this)">
-    <img src="images/pic2.jpg" onclick="openModal(this)">
-    <img src="images/pic3.jpg" onclick="openModal(this)">
-    <img src="images/pic4.jpg" onclick="openModal(this)">
-    <img src="images/pic5.jpg" onclick="openModal(this)">
-    <img src="images/pic6.jpg" onclick="openModal(this)">
-  </div>
-  <h1 id="name"></h1>
-  <h2>Will you be my Valentine?</h2>
+<div id="mainPage" class="page">
+  <h1>Will you be my Valentine?</h1>
   <div class="button-group">
-    <button id="yesBtn" onclick="showFinal()">Yes</button>
-    <button id="obviouslyBtn" onclick="showFinal()">Obviously</button>
+    <button id="yesBtn">Yes</button>
+    <button id="obviouslyBtn">Obviously</button>
     <button id="noBtn">No</button>
-  </div>
-  <div id="countdownCard">
-    <div id="countdown"></div>
   </div>
 </div>
 
 <!-- Final -->
-<div id="finalScreen" class="page">
-  <h1 class="final-line">Happy Valentine’s Day, cutie</h1>
+<div id="finalPage" class="page">
+  <h1 class="final-line">Happy Valentine’s Day, cutie!</h1>
   <p class="final-line">Every day with you is my favorite one.</p>
-  <p class="final-line">I’m keeping my vow to love you more each and every day — with intention, patience, and joy.</p>
+  <p class="final-line">I’m keeping my vow to love you more each and every day.</p>
   <p class="final-line">I choose you. Always.</p>
-  <p class="final-wink">(Yes was the correct answer)</p>
-  <img id="finalImage" src="images/final.jpg" alt="Final Image">
-  <button id="replayBtn" onclick="replay()">Replay</button>
+  <button id="replayBtn">Replay</button>
 </div>
-
-<!-- Modal -->
-<div id="modal" onclick="this.style.display='none'">
-  <img id="modalImg">
-</div>
-
-<!-- Hearts -->
-<div class="heart">❤</div>
-<div class="heart">❤</div>
-<div class="heart">❤</div>
 
 <script>
 document.addEventListener("DOMContentLoaded", function(){
-  const splash=document.getElementById("splashPage");
-  const main=document.getElementById("mainContent");
-  const final=document.getElementById("finalScreen");
-  const startBtn=document.getElementById("startBtn");
-  const music=document.getElementById("bgMusic");
-  const noBtn=document.getElementById("noBtn");
-  const replayBtn=document.getElementById("replayBtn");
-  const finalImage=document.getElementById("finalImage");
+  const splash = document.getElementById("splashPage");
+  const main = document.getElementById("mainPage");
+  const final = document.getElementById("finalPage");
 
-  // Animate Name
-  function animateName(){
-    const nameText="Hannah Prillaman";
-    const nameEl=document.getElementById("name");
-    nameEl.innerHTML="";
-    nameText.split("").forEach((c,i)=>{
-      const s=document.createElement("span");
-      s.textContent=c;
-      s.style.opacity=0;
-      s.style.transition="opacity 0.6s ease";
-      setTimeout(()=>s.style.opacity=1,i*180);
-      nameEl.appendChild(s);
-    });
-  }
+  const yesBtn = document.getElementById("yesBtn");
+  const obviouslyBtn = document.getElementById("obviouslyBtn");
+  const noBtn = document.getElementById("noBtn");
+  const startBtn = document.getElementById("startBtn");
+  const replayBtn = document.getElementById("replayBtn");
+  const finalLines = document.querySelectorAll("#finalPage .final-line");
 
   // Splash click
-  startBtn.onclick=function(){
+  startBtn.onclick = function() {
     splash.classList.remove("visible");
     main.classList.add("visible");
-    music.volume=0.25; music.play();
-    animateName();
   }
 
-  // Countdown
-  const countdown=document.getElementById("countdown");
-  function updateCountdown(){
-    const now=new Date();
-    const target=new Date(new Date().getFullYear(),1,14);
-    const diff=Math.max(target-now,0);
-    const d=Math.floor(diff/86400000);
-    const h=Math.floor((diff%86400000)/3600000);
-    const m=Math.floor((diff%3600000)/60000);
-    const s=Math.floor((diff%60000)/1000);
-    countdown.textContent=`${d}d ${h}h ${m}m ${s}s until Valentine’s Day`;
-  }
-  setInterval(updateCountdown,1000);
-  updateCountdown();
-
-  // No button hover
-  const protectedElements=[document.querySelector(".collage"), document.getElementById("countdownCard"), document.querySelector(".button-group"), document.getElementById("name"), document.querySelector("h2")];
-  function overlaps(x,y){
-    return protectedElements.some(el=>{
-      const r=el.getBoundingClientRect();
-      return !(x+noBtn.offsetWidth<r.left||x>r.right||y+noBtn.offsetHeight<r.top||y>r.bottom);
-    });
-  }
-  noBtn.onmouseover=function(){
-    const margin=20;
-    const maxX=window.innerWidth-noBtn.offsetWidth-margin;
-    const maxY=window.innerHeight-noBtn.offsetHeight-margin;
-    let x,y,attempts=0;
-    do{x=Math.random()*maxX+margin; y=Math.random()*maxY+margin; attempts++;} 
-    while(overlaps(x,y)&&attempts<100);
-    noBtn.style.left=x+'px';
-    noBtn.style.top=y+'px';
-    noBtn.classList.add("wiggle");
-    noBtn.addEventListener("animationend", function h(){ noBtn.classList.remove("wiggle"); noBtn.removeEventListener("animationend",h); });
+  // No button hover movement
+  noBtn.onmouseover = function(){
+    const group = noBtn.parentElement.getBoundingClientRect();
+    const maxX = group.width - noBtn.offsetWidth;
+    const maxY = group.height - noBtn.offsetHeight;
+    const x = Math.random() * maxX;
+    const y = Math.random() * maxY;
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
   }
 
-  // Modal
-  window.openModal=function(img){
-    const modal=document.getElementById("modal");
-    modal.style.display="flex";
-    document.getElementById("modalImg").src=img.src;
-  }
-
-  // Show final
-  window.showFinal=function(){
+  function showFinalPage() {
     main.classList.remove("visible");
     final.classList.add("visible");
-    const elements=[...document.querySelectorAll(".final-line"), finalImage];
-    elements.forEach((el,i)=>setTimeout(()=>el.classList.add("show"),i*800));
-    setTimeout(()=>document.querySelector(".final-wink").classList.add("show"),3200);
-    replayBtn.classList.remove("show");
-    setTimeout(()=>replayBtn.classList.add("show"),20000);
+    // fade in each line
+    finalLines.forEach((el,i)=>{
+      setTimeout(()=>el.classList.add("show"), i*600);
+    });
+    setTimeout(()=>replayBtn.classList.add("show"), finalLines.length*600);
   }
+
+  // Button clicks
+  yesBtn.onclick = showFinalPage;
+  obviouslyBtn.onclick = showFinalPage;
+  noBtn.onclick = showFinalPage; // optional: can alert if you want
 
   // Replay
-  window.replay=function(){
+  replayBtn.onclick = function() {
     final.classList.remove("visible");
+    finalLines.forEach(el=>el.classList.remove("show"));
+    replayBtn.classList.remove("show");
     main.classList.add("visible");
-    document.querySelectorAll(".final-line,.final-wink,#finalImage").forEach(el=>el.classList.remove("show"));
+    // reset no button position
     noBtn.style.left="0"; noBtn.style.top="0";
   }
-
 });
 </script>
+
 </body>
 </html>
