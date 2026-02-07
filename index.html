@@ -74,7 +74,6 @@ html, body {
   color:#ff99cc;
   opacity:0.7;
   pointer-events:none;
-  animation:floatUp 18s linear infinite;
   z-index:1;
 }
 @keyframes floatUp {0%{transform:translateY(0) rotate(0deg); opacity:0.7;}50%{transform:translateY(-60vh) rotate(10deg);}100%{transform:translateY(-120vh) rotate(-10deg); opacity:0;}}
@@ -111,9 +110,9 @@ html, body {
 /* Final image */
 #finalImage { max-width:48%; max-height:45%; border-radius:18px; display:block; margin-top:10px; }
 
-/* Modal */
-#modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; }
-#modal img { max-width:85%; max-height:85%; border-radius:20px; }
+/* Replay button hidden initially */
+#replayBtn { display:none; opacity:0; transition:opacity 1s ease; }
+#replayBtn.show { display:block; opacity:1; }
 </style>
 </head>
 <body>
@@ -213,6 +212,12 @@ document.addEventListener("DOMContentLoaded", function(){
   setInterval(updateCountdown,1000);
   updateCountdown();
 
+  // Initial floating hearts random positions
+  document.querySelectorAll('.heart').forEach(h=>{
+      h.style.left = Math.random()*90 + 'vw';
+      h.style.animation = `floatUp ${15 + Math.random()*10}s linear infinite`;
+  });
+
   // No button hover
   const protectedElements=[document.querySelector(".collage"), document.getElementById("countdownCard"), document.querySelector(".button-group"), document.getElementById("name"), document.querySelector("h2")];
   function overlaps(x,y){
@@ -223,16 +228,22 @@ document.addEventListener("DOMContentLoaded", function(){
   }
   noBtn.onmouseover=function(){
     noBtn.style.position='absolute';
-    let x,y,attempts=0;
     const margin=10;
-    const maxX=window.innerWidth-noBtn.offsetWidth-margin;
-    const maxY=window.innerHeight-noBtn.offsetHeight-margin;
-    do{x=Math.random()*maxX+margin; y=Math.random()*maxY+margin; attempts++;} 
-    while(overlaps(x,y)&&attempts<100);
-    noBtn.style.left=x+'px';
-    noBtn.style.top=y+'px';
+    const maxX=window.innerWidth - noBtn.offsetWidth - margin;
+    const maxY=window.innerHeight - noBtn.offsetHeight - margin;
+    let x,y,attempts=0;
+    do{
+      x = Math.random()*maxX;
+      y = Math.random()*maxY;
+      attempts++;
+    } while(overlaps(x,y) && attempts<100);
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
     noBtn.classList.add("wiggle");
-    noBtn.addEventListener("animationend",function h(){ noBtn.classList.remove("wiggle"); noBtn.removeEventListener("animationend",h); });
+    noBtn.addEventListener("animationend", function h(){
+        noBtn.classList.remove("wiggle");
+        noBtn.removeEventListener("animationend",h);
+    });
   }
 
   // Heart burst effect
@@ -272,7 +283,7 @@ document.addEventListener("DOMContentLoaded", function(){
     setTimeout(()=>finalImage.classList.add("show"),2400);
     heartBurst();
     replayBtn.classList.remove("show");
-    setTimeout(()=>replayBtn.classList.add("show"),20000); // replay delayed 20s
+    setTimeout(()=>replayBtn.classList.add("show"), 20000); // replay delayed 20s
   }
 
   // Button clicks
