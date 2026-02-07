@@ -2,191 +2,506 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Valentine 💖</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
+<meta charset="UTF-8">
+<title>Valentine Surprise</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 * {
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
   font-family: 'Poppins', sans-serif;
 }
 
 body {
-  margin: 0;
-  overflow: hidden;
-  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  background: linear-gradient(180deg, #ffd1e8, #ff9fcf);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin:0; padding:0;
+  width:100%; height:100%;
+  font-family:'Inter', sans-serif;
+  overflow:hidden;
+  background: linear-gradient(135deg, #ffe6f0 0%, #ffc0d9 100%);
 }
 
-/* ---------- PAGE SYSTEM (FIXED) ---------- */
+/* shared */
+/* Pages */
 .page {
   position: absolute;
-  inset: 0;
-  display: none;              /* 🔑 CRITICAL FIX */
+  width: 100%;
+  height: 100%;
+  display: none;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 20px;
-  opacity: 0;
-  transition: opacity 1s ease;
+  position:absolute;
+  top:0; left:0;
+  width:100vw; height:100vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  padding:20px;
+  box-sizing:border-box;
+  opacity:0;
+  transition:opacity 1s ease;
 }
 
-.page.visible {
-  display: flex;              /* 🔑 CRITICAL FIX */
-  opacity: 1;
-  z-index: 2;
+.page.active {
+  display: flex;
+.page.visible { opacity:1; z-index:2; }
+
+/* Collage */
+.collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-bottom:20px; }
+.collage img { width:190px; height:190px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); transition:transform 0.3s; }
+.collage img:hover { transform:scale(1.05); cursor:pointer; }
+
+/* Buttons */
+.button-group {
+  display:flex;
+  gap:20px;
+  margin-top:20px;
+  position:relative; /* for No hover move */
 }
 
-/* ---------- HEADERS ---------- */
-h1 {
-  font-family: 'Playfair Display', serif;
-  font-size: 3rem;
+/* buttons */
+.btn {
+  padding: 14px 28px;
+  border-radius: 30px;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  background: white;
+  color: #ff4f9a;
+  font-weight: 600;
+  transition: transform 0.2s ease, background 0.2s ease;
+.button-group button, #startBtn, #replayBtn {
+  padding:14px 32px;
+  border-radius:28px;
+  border:none;
+  font-size:1.1em;
+  background:linear-gradient(145deg,#ff8ab8,#ff5a91);
+  color:white;
+  cursor:pointer;
+  font-family:'Playfair Display', serif;
+  box-shadow:0 4px 12px rgba(0,0,0,0.15);
+  transition:all 0.3s ease;
+}
+.button-group button:hover, #startBtn:hover, #replayBtn:hover { transform:translateY(-2px); }
+
+.btn:hover {
+  transform: scale(1.08);
+  background: #ffe6f1;
+#noBtn {
+  position:relative; 
+  transition:left 0.5s ease, top 0.5s ease;
+}
+#noBtn.wiggle { animation: wiggle 0.5s ease; }
+@keyframes wiggle {0%{transform:translateX(0);}25%{transform:translateX(-6px);}50%{transform:translateX(6px);}75%{transform:translateX(-4px);}100%{transform:translateX(0);}}
+
+/* splash */
+#splash button {
+  font-size: 22px;
+}
+/* Countdown */
+#countdownCard { margin-top:20px; padding:20px 30px; max-width:380px; background:rgba(255,255,255,0.7); border-radius:25px; box-shadow:0 10px 25px rgba(0,0,0,0.1); font-size:1.2em; font-family:'Inter',sans-serif; }
+
+/* main page */
+#main h1 {
+  font-family: 'Pacifico', cursive;
+  font-size: 56px;
   margin-bottom: 10px;
 }
 
-h2 {
-  font-size: 1.6rem;
-  font-weight: 400;
+#main h2 {
+  font-size: 26px;
   margin-bottom: 30px;
+/* Hearts */
+.heart {
+  position:fixed;
+  bottom:-40px;
+  font-size:20px;
+  color:#ff99cc;
+  opacity:0.7;
+  pointer-events:none;
+  z-index:1;
 }
 
-/* ---------- BUTTONS ---------- */
-.button-row {
+.buttons {
   display: flex;
   gap: 20px;
-}
-
-button {
-  padding: 14px 28px;
-  border-radius: 999px;
-  border: none;
-  font-size: 1rem;
-  cursor: pointer;
-  background: white;
-  color: #ff4f81;
-  font-weight: 600;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-button:hover {
-  transform: scale(1.08);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
-}
-
-/* ---------- NO BUTTON ---------- */
-#noBtn {
   position: relative;
+@keyframes floatUp {0%{transform:translateY(0) rotate(0deg); opacity:0.7;}50%{transform:translateY(-60vh) rotate(10deg);}100%{transform:translateY(-120vh) rotate(-10deg); opacity:0;}}
+
+/* Name animation */
+#name span {
+  opacity:0;
+  display:inline-block;
+  font-family:'Playfair Display', serif;
+  font-size:2em;
+  transform: translateY(10px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
-/* ---------- HEARTS ---------- */
+/* final page */
+#final h1 {
+  font-family: 'Pacifico', cursive;
+  font-size: 48px;
+  margin-bottom: 12px;
+#name span.show {
+  opacity:1;
+  transform: translateY(0);
+}
+
+#final p {
+  font-size: 20px;
+  margin-bottom: 12px;
+/* Final Page */
+#finalPage {display:flex; flex-direction:column; justify-content:flex-start; align-items:center; text-align:center; padding:40px 20px; gap:12px; font-family:'Playfair Display', serif;}
+#finalPage h1.final-line {
+  font-size:2.4em; 
+  margin-bottom:10px;
+}
+
+#final img {
+  width: 300px;
+  border-radius: 18px;
+  margin-top: 10px;
+#finalPage p.final-line {
+  font-size:1.55em; 
+  margin:6px 0;
+}
+.final-line, #finalImage { opacity:0; transform:translateY(10px); transition:opacity 1.2s ease, transform 1.2s ease; }
+.final-line.show, #finalImage.show { opacity:1; transform:translateY(0); }
+.final-wink { opacity:0; font-size:1.3em; margin-bottom:10px; transition: opacity 2s ease; }
+.final-wink.show { opacity:0.7; }
+
+#replay {
+  margin-top: 24px;
+  opacity: 0;
+  display: none;
+  transition: opacity 1s ease;
+}
+/* Final image */
+#finalImage { max-width:48%; max-height:45%; border-radius:18px; display:block; margin-top:10px; }
+
+/* hearts */
 .heart {
   position: fixed;
   bottom: -30px;
-  font-size: 20px;
-  animation: floatUp linear forwards;
+  z-index: 9999;
   pointer-events: none;
-  z-index: 999;
 }
-
-@keyframes floatUp {
-  from {
-    transform: translateY(0) rotate(0deg);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(-120vh) rotate(360deg);
-    opacity: 0;
-  }
-}
-
-/* ---------- FINAL PAGE ---------- */
-.final-img {
-  width: 260px;
-  margin: 20px 0;
-  border-radius: 20px;
-}
-
-.replay {
-  margin-top: 25px;
-  display: none;
-}
+/* Replay button hidden initially */
+#replayBtn { display:none; opacity:0; transition:opacity 1s ease; }
+#replayBtn.show { display:block; opacity:1; }
 </style>
 </head>
 
 <body>
 
 <!-- SPLASH -->
-<div id="splash" class="page visible">
-  <button onclick="goMain()">Touch Me 💖</button>
+<div id="splash" class="page active">
+  <button class="btn" id="startBtn">Touch Me</button>
+<audio id="bgMusic" loop>
+  <source src="music/song.mp3" type="audio/mpeg">
+</audio>
+
+<!-- Splash -->
+<div id="splashPage" class="page visible">
+  <button id="startBtn">Touch Me</button>
 </div>
 
 <!-- MAIN -->
 <div id="main" class="page">
   <h1>Hannah Prillaman</h1>
-  <h2>Will you be my Valentine?</h2>
-
-  <div class="button-row">
-    <button onclick="goFinal()">Yes 💕</button>
-    <button id="noBtn">No 😅</button>
-    <button onclick="goFinal()">Obviously 💘</button>
+<!-- Main -->
+<div id="mainPage" class="page">
+  <div class="collage">
+    <img src="images/pic1.jpg">
+    <img src="images/pic2.jpg">
+    <img src="images/pic3.jpg">
+    <img src="images/pic4.jpg">
+    <img src="images/pic5.jpg">
+    <img src="images/pic6.jpg">
   </div>
+  <h1 id="name"></h1>
+<h2>Will you be my Valentine?</h2>
+
+  <div class="buttons">
+    <button class="btn" onclick="goFinal()">Yes 💖</button>
+    <button class="btn" onclick="goFinal()">Obviously 😘</button>
+    <button class="btn" id="noBtn">No 🙃</button>
+  <div class="button-group">
+    <button id="yesBtn">Yes</button>
+    <button id="obviouslyBtn">Obviously</button>
+    <button id="noBtn">No</button>
+  </div>
+  <div id="countdownCard">
+    <div id="countdown"></div>
+</div>
 </div>
 
 <!-- FINAL -->
 <div id="final" class="page">
   <h1>Happy Valentine’s Day ❤️</h1>
-  <p>You make every day brighter.</p>
-  <img src="your-image.jpg" class="final-img" />
-  <button class="replay" onclick="restart()">Replay 🔁</button>
+  <p>(you didn’t really have a choice)</p>
+  <img src="your-image.jpg" alt="us">
+  <button class="btn" id="replay">Replay 🔁</button>
+<!-- Final -->
+<div id="finalPage" class="page">
+  <p class="final-wink">(Yes was the correct answer)</p>
+  <h1 class="final-line">Happy Valentine’s Day, cutie!</h1>
+  <p class="final-line">Every day with you is my favorite one.</p>
+  <p class="final-line">I’m keeping my vow to love you more each and every day — with intention, patience, and joy.</p>
+  <p class="final-line">I choose you. Always.</p>
+  <img id="finalImage" src="images/final.jpg" alt="Final Image">
+  <button id="replayBtn" onclick="replay()">Replay</button>
 </div>
 
 <script>
-/* ---------- PAGE NAV ---------- */
-function showPage(id) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('visible'));
-  const page = document.getElementById(id);
-  page.classList.add('visible');
-}
-
-function goMain() {
-  showPage('main');
-}
-
-function goFinal() {
-  showPage('final');
-  setTimeout(() => {
-    document.querySelector('.replay').style.display = 'inline-block';
-  }, 2500);
-}
-
-function restart() {
-  showPage('splash');
-}
-
-/* ---------- NO BUTTON RUN ---------- */
+/* page control */
+const splash = document.getElementById('splash');
+const main = document.getElementById('main');
+const final = document.getElementById('final');
+const replay = document.getElementById('replay');
 const noBtn = document.getElementById('noBtn');
-noBtn.addEventListener('mouseenter', () => {
-  const maxX = 120;
-  const maxY = 60;
-  const x = Math.random() * maxX - maxX / 2;
-  const y = Math.random() * maxY - maxY / 2;
-  noBtn.style.transform = `translate(${x}px, ${y}px)`;
-});
 
-/* ---------- HEARTS ---------- */
-setInterval(() => {
-  const heart = document.createElement('div');
-  heart.className = 'heart';
-  heart.innerText = Math.random() > 0.5 ? '💖' : '❤️';
-  heart.style.left = Math.random() * 100 + 'vw';
-  heart.style.fontSize = Math.random() * 20 + 14 + 'px';
-  heart.style.animationDuration = Math.random() * 3 + 4 + 's';
-  document.body.appendChild(heart);
-  setTimeout(() => heart.remove(), 7000);
-}, 300);
+document.getElementById('startBtn').onclick = () => {
+  splash.classList.remove('active');
+  main.classList.add('active');
+};
+
+/* no button run */
+noBtn.addEventListener('mouseenter', () => {
+  const padding = 80;
+  const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+  const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+
+  const x = Math.random() * maxX;
+  const y = Math.random() * maxY;
+
+  noBtn.style.position = 'fixed';
+  noBtn.style.left = x + 'px';
+  noBtn.style.top = y + 'px';
+});
+<!-- Hearts -->
+<div class="heart">❤</div>
+<div class="heart">❤</div>
+<div class="heart">❤</div>
+<div class="heart">❤</div>
+<div class="heart">❤</div>
+
+/* final */
+function goFinal() {
+  main.classList.remove('active');
+  final.classList.add('active');
+  heartBurst();
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+  const splash=document.getElementById("splashPage");
+  const main=document.getElementById("mainPage");
+  const final=document.getElementById("finalPage");
+  const startBtn=document.getElementById("startBtn");
+  const music=document.getElementById("bgMusic");
+  const noBtn=document.getElementById("noBtn");
+  const replayBtn=document.getElementById("replayBtn");
+  const finalImage=document.getElementById("finalImage");
+  const finalLines=document.querySelectorAll(".final-line");
+  const nameContainer=document.getElementById("name");
+
+  // Splash click
+  startBtn.onclick=function(){
+    splash.classList.remove("visible");
+    main.classList.add("visible");
+    music.volume=0.25;
+    music.play();
+
+    // Animate name with proper spacing
+    const name = "Hannah Prillaman";
+    nameContainer.innerHTML = "";
+    name.split("").forEach((letter, index) => {
+      const span = document.createElement("span");
+      span.innerHTML = letter === " " ? "&nbsp;" : letter;
+      nameContainer.appendChild(span);
+      setTimeout(() => span.classList.add("show"), index * 150);
+    });
+  }
+
+  setTimeout(() => {
+    replay.style.display = 'block';
+    requestAnimationFrame(() => replay.style.opacity = 1);
+  }, 1600);
+}
+  // Countdown
+  const countdown=document.getElementById("countdown");
+  function updateCountdown(){
+    const now=new Date();
+    const target=new Date(new Date().getFullYear(),1,14);
+    const diff=Math.max(target-now,0);
+    const d=Math.floor(diff/86400000);
+    const h=Math.floor((diff%86400000)/3600000);
+    const m=Math.floor((diff%3600000)/60000);
+    const s=Math.floor((diff%60000)/1000);
+    countdown.textContent=`${d}d ${h}h ${m}m ${s}s until Valentine’s Day`;
+  }
+  setInterval(updateCountdown,1000);
+  updateCountdown();
+
+  // Initial floating hearts random positions
+  document.querySelectorAll('.heart').forEach(h=>{
+      h.style.left = Math.random()*90 + 'vw';
+      h.style.animation = `floatUp ${15 + Math.random()*10}s linear infinite`;
+  });
+
+  // No button hover
+  const protectedElements=[document.querySelector(".collage"), document.getElementById("countdownCard"), document.querySelector(".button-group"), document.getElementById("name"), document.querySelector("h2")];
+  function overlaps(x,y){
+    return protectedElements.some(el=>{
+      const r=el.getBoundingClientRect();
+      return !(x+noBtn.offsetWidth<r.left||x>r.right||y+noBtn.offsetHeight<r.top||y>r.bottom);
+    });
+  }
+  noBtn.onmouseover=function(){
+    noBtn.style.position='absolute';
+    const margin=10;
+    const maxX=window.innerWidth - noBtn.offsetWidth - margin;
+    const maxY=window.innerHeight - noBtn.offsetHeight - margin;
+    let x,y,attempts=0;
+    do{
+      x = Math.random()*maxX;
+      y = Math.random()*maxY;
+      attempts++;
+    } while(overlaps(x,y) && attempts<100);
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
+    noBtn.classList.add("wiggle");
+    noBtn.addEventListener("animationend", function h(){
+        noBtn.classList.remove("wiggle");
+        noBtn.removeEventListener("animationend",h);
+    });
+  }
+
+/* replay */
+replay.onclick = () => {
+  replay.style.display = 'none';
+  replay.style.opacity = 0;
+  noBtn.style.position = 'static';
+  final.classList.remove('active');
+  main.classList.add('active');
+};
+
+/* hearts */
+function spawnHeart() {
+  const h = document.createElement('div');
+  h.className = 'heart';
+  h.textContent = '❤️';
+  h.style.left = Math.random() * 100 + 'vw';
+  h.style.fontSize = 12 + Math.random() * 22 + 'px';
+  h.style.color = Math.random() > 0.5 ? '#ff4f9a' : '#ff1e1e';
+  document.body.appendChild(h);
+
+  let y = -30;
+  let rot = Math.random() * 20 - 10;
+  const speed = 1 + Math.random() * 2;
+
+  const anim = setInterval(() => {
+    y += speed;
+    h.style.bottom = y + 'px';
+    h.style.transform = `rotate(${rot * y / 100}deg)`;
+    h.style.opacity = 1 - y / window.innerHeight;
+    if (y > window.innerHeight) {
+      clearInterval(anim);
+      h.remove();
+    }
+  }, 30);
+}
+  // Heart burst effect
+  function heartBurst() {
+      const count = 25;
+      for (let i = 0; i < count; i++) {
+          const heart = document.createElement('div');
+          heart.className = 'heart';
+          heart.style.fontSize = (10 + Math.random()*20) + 'px';
+          heart.style.left = (50 + Math.random()*20 - 10) + '%';
+          heart.style.bottom = '20%';
+          heart.style.opacity = 0.8;
+          heart.style.position = 'absolute';
+          heart.style.color = '#ff99cc';
+          heart.style.pointerEvents = 'none';
+          heart.style.transform = `rotate(${Math.random()*360}deg)`;
+          final.appendChild(heart);
+          
+          let top = 20;
+          const interval = setInterval(() => {
+              top += 1 + Math.random()*2;
+              heart.style.bottom = top + '%';
+              heart.style.opacity -= 0.02;
+              if (heart.style.opacity <= 0) {
+                  heart.remove();
+                  clearInterval(interval);
+              }
+          }, 30);
+      }
+  }
+
+setInterval(spawnHeart, 400);
+  // Show final
+  function showFinal(){
+    main.classList.remove("visible");
+    final.classList.add("visible");
+    finalLines.forEach((el,i)=>setTimeout(()=>el.classList.add("show"),i*800));
+    setTimeout(()=>finalImage.classList.add("show"),2400);
+    heartBurst();
+    replayBtn.classList.remove("show");
+    setTimeout(()=>replayBtn.classList.add("show"), 20000); // replay delayed 20s
+  }
+
+function heartBurst() {
+  for (let i = 0; i < 20; i++) {
+    setTimeout(spawnHeart, i * 120);
+  // Button clicks
+  document.getElementById("yesBtn").onclick=showFinal;
+  document.getElementById("obviouslyBtn").onclick=showFinal;
+  noBtn.onclick=showFinal;
+
+  // Replay
+  window.replay=function(){
+    final.classList.remove("visible");
+    finalLines.forEach(el=>el.classList.remove("show"));
+    replayBtn.classList.remove("show");
+    finalImage.classList.remove("show");
+    main.classList.add("visible");
+    noBtn.style.position='relative';
+    noBtn.style.left='0';
+    noBtn.style.top='0';
+    // Reset name animation
+    nameContainer.innerHTML = "";
+    const name="Hannah Prillaman";
+    name.split("").forEach((letter,index)=>{
+      const span=document.createElement("span");
+      span.innerHTML = letter === " " ? "&nbsp;" : letter;
+      nameContainer.appendChild(span);
+      setTimeout(()=>span.classList.add("show"), index*150);
+    });
+}
+}
 </script>
 
+});
+</script>
 </body>
 </html>
