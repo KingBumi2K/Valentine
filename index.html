@@ -41,6 +41,8 @@ button:hover { background:#ff2f73; }
 .final-wink { opacity:0; font-size:1.1em; margin-top:30px; transition:opacity 2s ease; }
 .final-wink.show { opacity:0.7; }
 
+#finalImage { margin-top:30px; width:240px; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.2); }
+
 #replayBtn { margin-top:40px; font-size:1em; padding:12px 28px; border-radius:25px; background:#ff4d88; color:white; opacity:0; pointer-events:none; transition:opacity 2s ease; }
 #replayBtn.show { opacity:1; pointer-events:auto; }
 </style>
@@ -75,11 +77,12 @@ button:hover { background:#ff2f73; }
 </div>
 
 <div id="finalScreen">
-  <h1 class="final-line">Happy Valentine’s Day, Hannah</h1>
+  <h1 class="final-line">Happy Valentine’s Day, cutie</h1>
   <p class="final-line">Every day with you is my favorite one.</p>
   <p class="final-line">I’m keeping my vow to love you more each and every day — with intention, patience, and joy.</p>
   <p class="final-line">I choose you. Always.</p>
   <p class="final-wink">(Yes was the correct answer)</p>
+  <img id="finalImage" src="images/final.jpg" alt="Final Image">
   <button id="replayBtn" onclick="replay()">Replay</button>
 </div>
 
@@ -138,19 +141,34 @@ document.addEventListener("DOMContentLoaded", function() {
   music.volume=0.25;
   music.play();
 
-  // NO BUTTON SAFE RANDOM MOVE
+  // SMART NO BUTTON
   const noBtn=document.getElementById("noBtn");
   const mainContent=document.getElementById("mainContent");
-  let noBtnDefault={top:50,left:window.innerWidth/2-50}; 
-  noBtn.style.top=noBtnDefault.top+"px";
-  noBtn.style.left=noBtnDefault.left+"px";
+  const collage=document.querySelector(".collage");
+  const countdownCard=document.getElementById("countdownCard");
+
+  // start in center
+  let startX=(window.innerWidth/2-50);
+  let startY=150;
+  noBtn.style.left=startX+"px";
+  noBtn.style.top=startY+"px";
 
   noBtn.onmouseover=function(){
     const margin=20;
     const maxX=window.innerWidth-100-margin;
     const maxY=window.innerHeight-60-margin;
-    const x=Math.random()*maxX+margin;
-    const y=Math.random()*maxY+margin;
+
+    let x, y, attempts=0;
+    do {
+      x=Math.random()*maxX+margin;
+      y=Math.random()*maxY+margin;
+      attempts++;
+      // prevent overlap with collage
+      const collageRect=collage.getBoundingClientRect();
+      const countdownRect=countdownCard.getBoundingClientRect();
+    } while ((x+80>collageRect.left && x<collageRect.right && y+30>collageRect.top && y<collageRect.bottom) ||
+             (x+80>countdownRect.left && x<countdownRect.right && y+30>countdownRect.top && y<countdownRect.bottom)
+             && attempts<50);
     noBtn.style.left=x+"px";
     noBtn.style.top=y+"px";
   };
@@ -179,9 +197,9 @@ document.addEventListener("DOMContentLoaded", function() {
     finalScreen.style.pointerEvents="none";
     document.getElementById("mainContent").style.opacity=1;
     document.querySelectorAll(".final-line,.final-wink").forEach(el=>el.classList.remove("show"));
-    // Reset no button
-    noBtn.style.top=noBtnDefault.top+"px";
-    noBtn.style.left=noBtnDefault.left+"px";
+    // Reset no button to start
+    noBtn.style.left=startX+"px";
+    noBtn.style.top=startY+"px";
   };
 
 });
