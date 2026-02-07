@@ -38,11 +38,11 @@ html, body {
 /* Buttons */
 .button-group {
   display: flex;
-  justify-content: center; /* center Yes and Obviously */
+  justify-content: center; /* centers all buttons including ghost */
   align-items: center;
   gap: 20px;
   margin-top: 20px;
-  position: relative; /* container for No button */
+  position: relative; /* container for absolute No button */
 }
 
 .button-group button, #startBtn, #replayBtn {
@@ -58,12 +58,13 @@ html, body {
   transition: all 0.3s ease;
 }
 
-/* No button moves independently */
+/* No button absolute */
 #noBtn {
   position: absolute;
-  top: 0; /* initial top inside button group */
-  left: calc(100% + 20px); /* start to the right of the Yes/Obviously buttons */
-  transition: top 0.4s ease, left 0.4s ease; 
+  transition: left 0.4s ease, top 0.4s ease;
+  /* Start on top of ghost button */
+  left: 0;
+  top: 0;
 }
 
 #noBtn.wiggle {
@@ -156,6 +157,7 @@ html, body {
   <div class="button-group">
     <button id="yesBtn">Yes</button>
     <button id="obviouslyBtn">Obviously</button>
+    <button class="ghostBtn" aria-hidden="true" style="visibility:hidden;">No</button> <!-- placeholder -->
     <button id="noBtn">No</button>
   </div>
   <div id="countdownCard">
@@ -242,19 +244,23 @@ document.addEventListener("DOMContentLoaded", function(){
     });
   }
 
-  noBtn.style.position = 'absolute';
-const buttonGroupRect = document.querySelector('.button-group').getBoundingClientRect();
-noBtn.style.top = '0px';
-noBtn.style.left = '50%';
-noBtn.style.transform = 'translateX(-50%)';
+// Position No button initially on top of ghost button
+const ghostBtn = document.querySelector(".ghostBtn");
+noBtn.style.position = 'absolute';
+const ghostRect = ghostBtn.getBoundingClientRect();
+const parentRect = ghostBtn.parentElement.getBoundingClientRect();
 
+// Relative to button-group container
+noBtn.style.left = (ghostRect.left - parentRect.left) + 'px';
+noBtn.style.top = (ghostRect.top - parentRect.top) + 'px';
+
+// No button hover movement
 noBtn.onmouseover = function() {
     const protectedElements = [
         document.querySelector(".collage"),
         document.getElementById("countdownCard"),
         document.getElementById("name"),
-        document.querySelector("h2"),
-        document.querySelector(".button-group")
+        document.querySelector("h2")
     ];
 
     function overlaps(x, y) {
@@ -271,7 +277,7 @@ noBtn.onmouseover = function() {
     const noBtnWidth = noBtn.offsetWidth;
     const noBtnHeight = noBtn.offsetHeight;
 
-    // Define boundaries so No stays inside viewport
+    // Define boundaries: fully inside viewport
     const maxX = window.innerWidth - noBtnWidth - margin;
     const maxY = window.innerHeight - noBtnHeight - margin;
     const minX = margin;
@@ -284,7 +290,7 @@ noBtn.onmouseover = function() {
         attempts++;
     } while (overlaps(x, y) && attempts < 200);
 
-    // Move the No button smoothly
+    // Move smoothly
     noBtn.style.left = x + 'px';
     noBtn.style.top = y + 'px';
 
