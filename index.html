@@ -55,6 +55,7 @@ button {
   font-family: 'Playfair Display', serif;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transition: all 0.3s ease;
+  margin: 0; /* Prevents alignment shifts */
 }
 
 /* Hover Animation for all buttons EXCEPT No button */
@@ -69,7 +70,7 @@ button:not(#noBtn):hover {
   position: absolute;
   z-index: 100;
   transition: left 0.4s ease, top 0.4s ease;
-  min-width: 80px; /* Ensures button doesn't shrink with short text */
+  min-width: 100px; /* Consistent width for text changes */
 }
 #noBtn.wiggle { animation: wiggle 0.5s ease; }
 
@@ -79,6 +80,17 @@ button:not(#noBtn):hover {
   50%{transform:translateX(6px);}
   75%{transform:translateX(-4px);}
   100%{transform:translateX(0);}
+}
+
+/* Button Group Container */
+.button-group {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin-top: 20px;
+  position: relative;
+  min-height: 60px; /* Ensures container has height for absolute positioning */
 }
 
 /* Pulsating Countdown Card */
@@ -158,12 +170,10 @@ button:not(#noBtn):hover {
   <source src="music/song.mp3" type="audio/mpeg">
 </audio>
 
-<!-- Splash -->
 <div id="splashPage" class="page visible">
   <button id="startBtn">Touch Me</button>
 </div>
 
-<!-- Main -->
 <div id="mainPage" class="page">
   <div class="collage">
     <img src="images/pic1.jpg">
@@ -186,7 +196,6 @@ button:not(#noBtn):hover {
   </div>
 </div>
 
-<!-- Final -->
 <div id="finalPage" class="page">
   <h1 class="final-line">Happy Valentine’s Day, cutie!</h1>
   <p class="final-line">Every day I'm with you is my favorite.</p>
@@ -227,20 +236,24 @@ document.addEventListener("DOMContentLoaded", function(){
     noBtn.innerText = "No";
     noBtn.style.transition = "none"; 
     noBtn.style.position = "absolute";
+    
+    // Use offsetParent coordinates to ensure perfect alignment
     noBtn.style.left = ghostBtn.offsetLeft + "px";
     noBtn.style.top = ghostBtn.offsetTop + "px";
+    
     noBtn.offsetHeight; 
     noBtn.style.transition = "left 0.4s ease, top 0.4s ease";
   }
 
-  resetNoButton();
+  // Set initial position
+  window.addEventListener('load', resetNoButton);
+  window.addEventListener('resize', resetNoButton);
 
   // --- 2. NO BUTTON RUN AWAY ---
   noBtn.addEventListener("mouseover", () => {
     const rects = [".collage", "#name", "h2", ".button-group", "#countdownCard"].map(s => document.querySelector(s).getBoundingClientRect());
     
     noHoverCount++;
-    // Change text every 2 hovers
     if (noHoverCount % 2 === 0) {
         const responseIndex = Math.min(Math.floor(noHoverCount / 2) - 1, noResponses.length - 1);
         noBtn.innerText = noResponses[responseIndex];
@@ -275,26 +288,20 @@ document.addEventListener("DOMContentLoaded", function(){
 
   // --- 3. ROUTINE HEARTS ---
   const heartColors = ['#ff4d6d', '#ff758f', '#ff85a1', '#fbb1bd', '#ffffff', '#ff0000', '#ffb3c1'];
-  
   function createHeart() {
     const heart = document.createElement('div');
     heart.className = 'heart';
     heart.innerHTML = '❤';
-    
     const color = heartColors[Math.floor(Math.random() * heartColors.length)];
     const size = Math.floor(Math.random() * 30) + 10; 
     const duration = Math.random() * 10 + 15; 
-    const leftPos = Math.random() * 100;
-    
-    heart.style.left = leftPos + 'vw';
+    heart.style.left = Math.random() * 100 + 'vw';
     heart.style.color = color;
     heart.style.fontSize = size + 'px';
     heart.style.animationDuration = `${duration}s, ${2 + Math.random() * 2}s`;
-    
     document.body.appendChild(heart);
     setTimeout(() => heart.remove(), duration * 1000);
   }
-  
   setInterval(createHeart, 350);
 
   // --- 4. FLOW LOGIC ---
@@ -304,6 +311,7 @@ document.addEventListener("DOMContentLoaded", function(){
     music.volume = 0.25;
     music.play();
     animateName();
+    resetNoButton(); // Recalculate once main page is visible
   };
 
   function animateName() {
