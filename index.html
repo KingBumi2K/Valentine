@@ -34,8 +34,18 @@ html, body {
 
 /* Collage */
 .collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-bottom:20px; }
-.collage img { width:190px; height:190px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); transition:transform 0.3s; }
-.collage img:hover { transform:scale(1.05); cursor:pointer; }
+.collage img { 
+  width:190px; height:190px; 
+  object-fit:cover; 
+  border-radius:18px; 
+  box-shadow:0 10px 25px rgba(0,0,0,0.15); 
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease; 
+}
+.collage img:hover { 
+  transform: scale(1.1); 
+  box-shadow: 0 15px 35px rgba(255, 105, 180, 0.4); 
+  cursor:pointer; 
+}
 
 /* Buttons */
 .button-group {
@@ -58,6 +68,19 @@ html, body {
   font-family: 'Playfair Display', serif;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transition: all 0.3s ease;
+}
+
+/* Pulsating Yes Buttons */
+#yesBtn, #obviouslyBtn {
+  animation: heartbeat 2s infinite ease-in-out;
+}
+
+@keyframes heartbeat {
+  0% { transform: scale(1); }
+  14% { transform: scale(1.05); }
+  28% { transform: scale(1); }
+  42% { transform: scale(1.05); }
+  70% { transform: scale(1); }
 }
 
 /* No button absolute */
@@ -89,12 +112,21 @@ html, body {
   pointer-events:none;
   z-index:1;
   user-select: none;
+  animation-name: floatUp, sway;
+  animation-timing-function: linear, ease-in-out;
+  animation-iteration-count: infinite;
 }
+
 @keyframes floatUp {
-  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  0% { bottom: -60px; opacity: 0; }
   10% { opacity: 0.8; }
   90% { opacity: 0.8; }
-  100% { transform: translateY(-120vh) rotate(25deg); opacity: 0; }
+  100% { bottom: 110vh; opacity: 0; }
+}
+
+@keyframes sway {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  50% { transform: translateX(30px) rotate(20deg); }
 }
 
 /* Name animation */
@@ -114,7 +146,7 @@ html, body {
 /* Final Page */
 #finalPage { padding:40px 20px; gap:12px; font-family:'Playfair Display', serif;}
 #finalPage h1.final-line { font-size:2.4em; margin-bottom:10px; }
-#finalPage p.final-line { font-size:1.55em; margin:6px 0; }
+#finalPage p.final-line { font-size:1.3em; margin:6px 0; color: #444; } /* Reduced size & softer color */
 .final-line, #finalImage { opacity:0; transform:translateY(10px); transition:opacity 1.2s ease, transform 1.2s ease; }
 .final-line.show, #finalImage.show { opacity:1; transform:translateY(0); }
 
@@ -194,10 +226,13 @@ document.addEventListener("DOMContentLoaded", function(){
   const countdown = document.getElementById("countdown");
 
   let firstHover = true;
+  let noHoverCount = 0;
 
   // --- 1. POSITIONING & RESET ---
   function resetNoButton() {
     firstHover = true;
+    noHoverCount = 0;
+    noBtn.innerText = "No";
     noBtn.style.transition = "none"; 
     noBtn.style.position = "absolute";
     noBtn.style.left = ghostBtn.offsetLeft + "px";
@@ -212,6 +247,11 @@ document.addEventListener("DOMContentLoaded", function(){
   noBtn.addEventListener("mouseover", () => {
     const rects = [".collage", "#name", "h2", ".button-group", "#countdownCard"].map(s => document.querySelector(s).getBoundingClientRect());
     
+    noHoverCount++;
+    if (noHoverCount > 15) noBtn.innerText = "Okay, fine!";
+    else if (noHoverCount > 10) noBtn.innerText = "Really?";
+    else if (noHoverCount > 5) noBtn.innerText = "Wait...";
+
     if (firstHover) {
       const currentRect = noBtn.getBoundingClientRect();
       noBtn.style.transition = "none"; 
@@ -247,25 +287,21 @@ document.addEventListener("DOMContentLoaded", function(){
     heart.className = 'heart';
     heart.innerHTML = '❤';
     
-    // Randomization
     const color = heartColors[Math.floor(Math.random() * heartColors.length)];
-    const size = Math.floor(Math.random() * 30) + 10; // 10px to 40px
-    const duration = Math.random() * 10 + 15; // 15s to 25s (Slow)
+    const size = Math.floor(Math.random() * 30) + 10; 
+    const duration = Math.random() * 10 + 15; 
     const leftPos = Math.random() * 100;
     
     heart.style.left = leftPos + 'vw';
     heart.style.color = color;
     heart.style.fontSize = size + 'px';
-    heart.style.animation = `floatUp ${duration}s linear forwards`;
+    heart.style.animationDuration = `${duration}s, ${2 + Math.random() * 2}s`;
     
     document.body.appendChild(heart);
-    
-    // Cleanup
     setTimeout(() => heart.remove(), duration * 1000);
   }
   
-  // High frequency spawn (every 300ms)
-  setInterval(createHeart, 300);
+  setInterval(createHeart, 350);
 
   // --- 4. FLOW LOGIC ---
   startBtn.onclick = function(){
@@ -296,7 +332,6 @@ document.addEventListener("DOMContentLoaded", function(){
     const imageDelay = (finalLines.length - 1) * 800 + 400;
     setTimeout(() => finalImage.classList.add("show"), imageDelay);
     
-    // Replay button fade in 15s after content
     setTimeout(() => {
         replayBtn.classList.add("show");
     }, imageDelay + 15000);
