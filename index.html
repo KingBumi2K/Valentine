@@ -5,15 +5,15 @@
 <title>Happy Valentine’s Day</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-/* BODY + TRUE PINK GRADIENT */
+/* BODY + LIGHT PINK GRADIENT + NO SCROLL */
 body, html {
   margin: 0;
   padding: 0;
   height: 100%;
   width: 100%;
   font-family: 'Inter', sans-serif;
-  overflow-x: hidden;
-  background: linear-gradient(135deg, #ffd1e0 0%, #ff9fcf 40%, #ff80b0 70%, #ff4a90 100%);
+  overflow: hidden; /* prevent scrolling */
+  background: linear-gradient(135deg, #ffe6f0 0%, #ffd6e8 40%, #ffc0d9 70%, #ffb3cc 100%);
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
@@ -23,17 +23,18 @@ body, html {
 h1, h2 { font-family:'Playfair Display', serif; margin-bottom:20px; }
 h1 { font-size:3em; } h2 { font-size:2em; }
 
-/* SPLASH, MAIN, FINAL: CENTER CONTENT */
+/* SPLASH, MAIN, FINAL: CENTER CONTENT, FULL SCREEN, NO SCROLL */
 #splashPage, #mainContent, #finalScreen {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  justify-content: center; /* vertical center */
+  align-items: center;     /* horizontal center */
   text-align: center;
-  min-height: 100vh;
+  height: 100vh;           /* exactly full viewport */
   width: 100%;
-  padding: 40px 20px;
+  overflow: hidden;        /* prevent scroll inside pages */
   box-sizing: border-box;
+  padding: 0 20px;
 }
 
 /* COLLAGE */
