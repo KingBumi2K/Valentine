@@ -255,41 +255,38 @@ noBtn.style.left = (ghostRect.left - parentRect.left) + 'px';
 noBtn.style.top = (ghostRect.top - parentRect.top) + 'px';
 
 // ------------------- NO BUTTON HOVER (with hard boundaries) -------------------
-// No button hover
-const buttonGroup = document.querySelector('.button-group');
+const noBtn = document.getElementById("noBtn");
 const ghostBtn = document.querySelector(".ghostBtn");
+let firstHover = true;
 
-// Place initially on top of ghost button (aligned with flex)
+// Place No button initially aligned with ghost button
 noBtn.style.position = 'relative';
 noBtn.style.left = '0';
 noBtn.style.top = '0';
 
-let noHovered = false;
-
-noBtn.addEventListener("mouseover", function() {
+noBtn.addEventListener("mouseover", () => {
     const btnWidth = noBtn.offsetWidth;
     const btnHeight = noBtn.offsetHeight;
     const margin = 10;
 
-    // Switch to absolute inside button-group for movement
-    if (!noHovered) {
+    // Switch to absolute for movement
+    if (firstHover) {
         const ghostRect = ghostBtn.getBoundingClientRect();
-        const parentRect = buttonGroup.getBoundingClientRect();
         noBtn.style.position = 'absolute';
-        noBtn.style.left = (ghostRect.left - parentRect.left) + 'px';
-        noBtn.style.top = (ghostRect.top - parentRect.top) + 'px';
+        noBtn.style.left = ghostRect.left + 'px';
+        noBtn.style.top = ghostRect.top + 'px';
+        firstHover = false;
     }
 
-    // Hard boundaries relative to button-group container
-    const maxX = buttonGroup.offsetWidth * 0.7 - btnWidth - margin;
+    // Hard boundaries
     const minX = margin;
+    const maxX = window.innerWidth - btnWidth - margin;
 
     const countdown = document.getElementById("countdownCard");
     const countdownRect = countdown.getBoundingClientRect();
-    const parentTop = buttonGroup.getBoundingClientRect().top;
 
     const minY = margin;
-    const maxY = countdownRect.top - parentTop - btnHeight - margin; // never below countdown
+    const maxY = countdownRect.top - btnHeight - margin; // never below countdown
 
     const x = minX + Math.random() * (maxX - minX);
     const y = minY + Math.random() * (maxY - minY);
@@ -303,8 +300,6 @@ noBtn.addEventListener("mouseover", function() {
         noBtn.classList.remove("wiggle");
         noBtn.removeEventListener("animationend", h);
     });
-
-    noHovered = true;
 });
 
   // Heart burst effect
