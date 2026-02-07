@@ -85,16 +85,16 @@ html, body {
 /* Hearts */
 .heart {
   position:fixed;
-  bottom:-50px;
-  font-size:20px;
-  color:#ff99cc;
-  opacity:0.7;
+  bottom:-60px;
   pointer-events:none;
   z-index:1;
+  user-select: none;
 }
 @keyframes floatUp {
-  0%{transform:translateY(0) rotate(0deg); opacity:0.7;}
-  100%{transform:translateY(-110vh) rotate(20deg); opacity:0;}
+  0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+  10% { opacity: 0.8; }
+  90% { opacity: 0.8; }
+  100% { transform: translateY(-120vh) rotate(25deg); opacity: 0; }
 }
 
 /* Name animation */
@@ -121,7 +121,7 @@ html, body {
 /* Final image */
 #finalImage { max-width:48%; max-height:45%; border-radius:18px; display:block; margin-top:10px; }
 
-/* Replay button hidden initially with smooth fade */
+/* Replay button smooth fade */
 #replayBtn { 
   opacity: 0; 
   visibility: hidden;
@@ -200,10 +200,9 @@ document.addEventListener("DOMContentLoaded", function(){
     firstHover = true;
     noBtn.style.transition = "none"; 
     noBtn.style.position = "absolute";
-    // Place exactly on the ghost button
     noBtn.style.left = ghostBtn.offsetLeft + "px";
     noBtn.style.top = ghostBtn.offsetTop + "px";
-    noBtn.offsetHeight; // Force reflow
+    noBtn.offsetHeight; 
     noBtn.style.transition = "left 0.4s ease, top 0.4s ease";
   }
 
@@ -211,17 +210,15 @@ document.addEventListener("DOMContentLoaded", function(){
 
   // --- 2. NO BUTTON RUN AWAY ---
   noBtn.addEventListener("mouseover", () => {
-    // Elements to avoid
     const rects = [".collage", "#name", "h2", ".button-group", "#countdownCard"].map(s => document.querySelector(s).getBoundingClientRect());
     
     if (firstHover) {
-      // Capture screen position to prevent top-left jump
       const currentRect = noBtn.getBoundingClientRect();
       noBtn.style.transition = "none"; 
       noBtn.style.position = 'fixed';
       noBtn.style.left = currentRect.left + 'px';
       noBtn.style.top = currentRect.top + 'px';
-      noBtn.offsetHeight; // Force reflow
+      noBtn.offsetHeight; 
       noBtn.style.transition = "left 0.4s ease, top 0.4s ease";
       firstHover = false;
     }
@@ -232,11 +229,7 @@ document.addEventListener("DOMContentLoaded", function(){
     while (!found && attempts < 50) {
       newX = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40) + 20;
       newY = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40) + 20;
-      
-      // Collision detection
-      found = !rects.some(r => {
-        return !(newX + noBtn.offsetWidth < r.left || newX > r.right || newY + noBtn.offsetHeight < r.top || newY > r.bottom);
-      });
+      found = !rects.some(r => !(newX + noBtn.offsetWidth < r.left || newX > r.right || newY + noBtn.offsetHeight < r.top || newY > r.bottom));
       attempts++;
     }
 
@@ -246,18 +239,33 @@ document.addEventListener("DOMContentLoaded", function(){
     setTimeout(() => noBtn.classList.remove("wiggle"), 500);
   });
 
-  // --- 3. ROUTINE HEARTS ---
+  // --- 3. REFINED ROUTINE HEARTS ---
+  const heartColors = ['#ff4d6d', '#ff758f', '#ff85a1', '#fbb1bd', '#ffffff', '#ff0000', '#ffb3c1'];
+  
   function createHeart() {
     const heart = document.createElement('div');
     heart.className = 'heart';
     heart.innerHTML = '❤';
-    heart.style.left = Math.random() * 100 + 'vw';
-    heart.style.fontSize = (Math.random() * 15 + 15) + 'px';
-    heart.style.animation = `floatUp ${Math.random() * 5 + 10}s linear forwards`;
+    
+    // Randomization
+    const color = heartColors[Math.floor(Math.random() * heartColors.length)];
+    const size = Math.floor(Math.random() * 30) + 10; // 10px to 40px
+    const duration = Math.random() * 10 + 15; // 15s to 25s (Slow)
+    const leftPos = Math.random() * 100;
+    
+    heart.style.left = leftPos + 'vw';
+    heart.style.color = color;
+    heart.style.fontSize = size + 'px';
+    heart.style.animation = `floatUp ${duration}s linear forwards`;
+    
     document.body.appendChild(heart);
-    setTimeout(() => heart.remove(), 15000);
+    
+    // Cleanup
+    setTimeout(() => heart.remove(), duration * 1000);
   }
-  setInterval(createHeart, 1000);
+  
+  // High frequency spawn (every 300ms)
+  setInterval(createHeart, 300);
 
   // --- 4. FLOW LOGIC ---
   startBtn.onclick = function(){
@@ -283,14 +291,12 @@ document.addEventListener("DOMContentLoaded", function(){
     main.classList.remove("visible");
     final.classList.add("visible");
     
-    // Text lines sequence
     finalLines.forEach((el, i) => setTimeout(() => el.classList.add("show"), i * 800));
 
-    // Image timing
     const imageDelay = (finalLines.length - 1) * 800 + 400;
     setTimeout(() => finalImage.classList.add("show"), imageDelay);
     
-    // Replay button fade in after 15s
+    // Replay button fade in 15s after content
     setTimeout(() => {
         replayBtn.classList.add("show");
     }, imageDelay + 15000);
@@ -299,17 +305,13 @@ document.addEventListener("DOMContentLoaded", function(){
   window.replay = function(){
     final.classList.remove("visible");
     main.classList.add("visible");
-    
-    // Reset states
     finalLines.forEach(el => el.classList.remove("show"));
     finalImage.classList.remove("show");
     replayBtn.classList.remove("show");
-    
     resetNoButton();
     animateName();
   };
 
-  // Countdown
   function updateCountdown(){
     const now = new Date();
     const target = new Date(now.getFullYear(), 1, 14);
