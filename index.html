@@ -259,6 +259,7 @@ noBtn.onmouseover = function() {
     const protectedElements = [
         document.querySelector(".collage"),
         document.getElementById("countdownCard"),
+        document.querySelector(".button-group"),
         document.getElementById("name"),
         document.querySelector("h2")
     ];
@@ -274,23 +275,11 @@ noBtn.onmouseover = function() {
     }
 
     const margin = 10;
-    const noBtnWidth = noBtn.offsetWidth;
-    const noBtnHeight = noBtn.offsetHeight;
-
-    // Horizontal boundaries
     const minX = margin;
-    const maxX = window.innerWidth - noBtnWidth - margin;
+    const maxX = window.innerWidth - noBtn.offsetWidth - margin;
 
-    // Vertical boundaries
-    const buttonGroupRect = document.querySelector('.button-group').getBoundingClientRect();
-    const collageRect = document.querySelector('.collage').getBoundingClientRect();
-    const countdownRect = document.getElementById('countdownCard').getBoundingClientRect();
-
-    // Max Y is the lowest visible area above buttons and countdown
-    const maxY = Math.min(buttonGroupRect.top - noBtnHeight - margin,
-                          countdownRect.top - noBtnHeight - margin,
-                          window.innerHeight - noBtnHeight - margin);
-    const minY = margin; // top of viewport
+    const minY = margin;
+    const maxY = window.innerHeight - noBtn.offsetHeight - margin;
 
     let x, y, attempts = 0;
     do {
@@ -299,7 +288,6 @@ noBtn.onmouseover = function() {
         attempts++;
     } while (overlaps(x, y) && attempts < 200);
 
-    // Smooth move
     noBtn.style.left = x + 'px';
     noBtn.style.top = y + 'px';
 
