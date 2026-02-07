@@ -22,15 +22,29 @@ h1 { font-size:3em; } h2 { font-size:2em; }
 
 #countdownCard { margin:40px auto; padding:25px 40px; max-width:420px; background:rgba(255,255,255,0.7); border-radius:30px; box-shadow:0 10px 30px rgba(0,0,0,0.1); font-size:1.3em; }
 
-/* BUTTONS INLINE */
+/* BUTTONS INLINE, cute style */
 .button-group {
   display: flex;
   justify-content: center;
   gap: 16px;
   margin: 20px 0;
 }
-.button-group button { position: relative; }
-
+.button-group button {
+  position: relative;
+  padding:14px 32px;
+  font-size:1.1em;
+  border-radius:28px;
+  border:none;
+  background: linear-gradient(145deg,#ff8ab8,#ff5a91);
+  color:white;
+  cursor:pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
+}
+.button-group button:hover {
+  transform: translateY(-2px);
+  box-shadow:0 6px 18px rgba(0,0,0,0.2);
+}
 #noBtn.hovered { position:absolute; cursor:pointer; }
 
 /* Wiggle animation */
@@ -43,8 +57,24 @@ h1 { font-size:3em; } h2 { font-size:2em; }
 }
 #noBtn.wiggle { animation: wiggle 0.5s ease; }
 
-.heart { position:fixed; bottom:-40px; font-size:26px; color:#ff99cc; opacity:0.7; animation:floatUp 12s linear; pointer-events:none; }
-@keyframes floatUp { to { transform:translateY(-120vh); opacity:0; } }
+/* HEARTS */
+.heart {
+  position: fixed;
+  bottom: -40px;
+  font-size: 20px;
+  color: #ff99cc;
+  opacity: 0.7;
+  pointer-events: none;
+  animation: floatUp 16s linear forwards;
+  transform-origin: center;
+}
+@keyframes floatUp {
+  0% { transform: translateY(0) rotate(0deg); opacity: 0.7; }
+  25% { transform: translateY(-25vh) rotate(10deg); }
+  50% { transform: translateY(-60vh) rotate(-10deg); opacity:0.85; }
+  75% { transform: translateY(-90vh) rotate(5deg); }
+  100% { transform: translateY(-120vh) rotate(-5deg); opacity: 0; }
+}
 
 #modal { position:fixed; inset:0; background:rgba(0,0,0,0.8); display:none; align-items:center; justify-content:center; }
 #modal img { max-width:85%; max-height:85%; border-radius:20px; }
@@ -59,7 +89,7 @@ h1 { font-size:3em; } h2 { font-size:2em; }
 
 #finalImage { margin-top:30px; width:240px; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.2); }
 
-#replayBtn { margin-top:40px; font-size:1em; padding:12px 28px; border-radius:25px; background:#ff4d88; color:white; opacity:0; pointer-events:none; transition:opacity 2s ease; }
+#replayBtn { margin-top:40px; font-size:1em; padding:12px 28px; border-radius:25px; background:#ff8ab8; color:white; opacity:0; pointer-events:none; transition:opacity 2s ease; }
 #replayBtn.show { opacity:1; pointer-events:auto; }
 </style>
 </head>
@@ -137,16 +167,28 @@ document.addEventListener("DOMContentLoaded", function() {
   setInterval(updateCountdown,1000);
   updateCountdown();
 
-  // HEARTS
+  // HEARTS (dreamy)
   function createHeart(){
-    const h=document.createElement("div");
-    h.className="heart";
-    h.textContent="❤";
-    h.style.left=Math.random()*100+"vw";
+    const h = document.createElement("div");
+    h.className = "heart";
+    h.textContent = "❤";
+
+    // Random horizontal position
+    h.style.left = Math.random() * 100 + "vw";
+
+    // Random size
+    const size = 18 + Math.random() * 14; // 18px to 32px
+    h.style.fontSize = size + "px";
+
+    // Random animation duration and delay
+    const duration = 14 + Math.random() * 4; // 14-18s
+    h.style.animationDuration = duration + "s";
+    h.style.animationDelay = (Math.random() * 4) + "s";
+
     document.body.appendChild(h);
-    setTimeout(()=>h.remove(),12000);
+    setTimeout(() => h.remove(), (duration+4)*1000); // remove after animation
   }
-  setInterval(createHeart,2000);
+  setInterval(createHeart, 1200);
 
   // MODAL
   window.openModal=function(img){
@@ -159,32 +201,32 @@ document.addEventListener("DOMContentLoaded", function() {
   music.volume=0.25;
   music.play();
 
-  // SMART NO BUTTON WITH WIGGLE
+  // SMART NO BUTTON WITH WIGGLE, constrained to viewport
   const noBtn=document.getElementById("noBtn");
   const collage=document.querySelector(".collage");
   const countdownCard=document.getElementById("countdownCard");
 
   noBtn.onmouseover=function(){
-    noBtn.classList.add("hovered"); // make absolute
+    noBtn.classList.add("hovered");
     const margin=20;
-    const maxX=window.innerWidth-100-margin;
-    const maxY=window.innerHeight-60-margin;
+    const maxX=window.innerWidth - noBtn.offsetWidth - margin;
+    const maxY=window.innerHeight - noBtn.offsetHeight - margin;
 
     let x, y, attempts=0;
     do {
-      x=Math.random()*maxX+margin;
-      y=Math.random()*maxY+margin;
+      x=Math.random()*maxX + margin;
+      y=Math.random()*maxY + margin;
       attempts++;
-      const collageRect=collage.getBoundingClientRect();
-      const countdownRect=countdownCard.getBoundingClientRect();
-    } while ((x+80>collage.getBoundingClientRect().left && x<collage.getBoundingClientRect().right && y+30>collage.getBoundingClientRect().top && y<collage.getBoundingClientRect().bottom) ||
-             (x+80>countdownCard.getBoundingClientRect().left && x<countdownCard.getBoundingClientRect().right && y+30>countdownCard.getBoundingClientRect().top && y<countdownCard.getBoundingClientRect().bottom)
+    } while ((x+noBtn.offsetWidth>collage.getBoundingClientRect().left && x<collage.getBoundingClientRect().right &&
+              y+noBtn.offsetHeight>collage.getBoundingClientRect().top && y<collage.getBoundingClientRect().bottom) ||
+             (x+noBtn.offsetWidth>countdownCard.getBoundingClientRect().left && x<countdownCard.getBoundingClientRect().right &&
+              y+noBtn.offsetHeight>countdownCard.getBoundingClientRect().top && y<countdownCard.getBoundingClientRect().bottom)
              && attempts<50);
 
     noBtn.style.left=x+"px";
     noBtn.style.top=y+"px";
 
-    // Trigger wiggle
+    // Wiggle
     noBtn.classList.add("wiggle");
     noBtn.addEventListener("animationend", function handler(){
       noBtn.classList.remove("wiggle");
@@ -202,7 +244,6 @@ document.addEventListener("DOMContentLoaded", function() {
     finalScreen.style.pointerEvents="auto";
     finalScreen.style.opacity=1;
 
-    // Animate text + final image
     const finalElements = [...document.querySelectorAll(".final-line"), finalImage];
     finalElements.forEach((el,i)=>{
       setTimeout(()=>el.classList.add("show"), i*800);
@@ -221,6 +262,8 @@ document.addEventListener("DOMContentLoaded", function() {
     document.getElementById("mainContent").style.opacity=1;
     document.querySelectorAll(".final-line,.final-wink, #finalImage").forEach(el=>el.classList.remove("show"));
     noBtn.classList.remove("hovered");
+    noBtn.style.left=""; // back to inline
+    noBtn.style.top="";
   };
 
 });
