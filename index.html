@@ -5,6 +5,7 @@
 <title>Valentine's Surprise</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+/* --- BASE STYLES --- */
 body, html {
   margin:0; padding:0;
   height:100%; width:100%;
@@ -19,8 +20,23 @@ h1 { font-size:3em; }
 h2 { font-size:2em; }
 
 /* PAGE CONTAINERS */
-.page { display:none; flex-direction:column; justify-content:center; align-items:center; height:100vh; width:100vw; text-align:center; padding:20px; box-sizing:border-box; opacity:0; transition: opacity 1s ease; }
-.page.show { opacity:1; }
+.page {
+  display:flex; /* always exists */
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  height:100vh; width:100vw;
+  text-align:center;
+  padding:20px;
+  box-sizing:border-box;
+  opacity:0;                /* start invisible */
+  transition: opacity 1s ease;
+  pointer-events:none;      /* prevent interaction until visible */
+}
+.page.show {
+  opacity:1;
+  pointer-events:auto;      /* enable interaction after fade-in */
+}
 
 /* COLLAGE */
 .collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-top:20px; margin-bottom:30px; }
@@ -31,7 +47,7 @@ h2 { font-size:2em; }
 button { padding:14px 32px; font-size:1.1em; border-radius:28px; border:none; background: linear-gradient(145deg,#ff8ab8,#ff5a91); color:white; cursor:pointer; box-shadow:0 4px 12px rgba(0,0,0,0.15); transition: all 0.3s ease; }
 button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2); }
 
-/* NO BUTTON WIGGLE + smooth movement */
+/* NO BUTTON */
 #noBtn { transition: left 0.5s ease, top 0.5s ease; }
 @keyframes wiggle {0%{transform:translateX(0);}25%{transform:translateX(-6px);}50%{transform:translateX(6px);}75%{transform:translateX(-4px);}100%{transform:translateX(0);}}
 #noBtn.wiggle { animation: wiggle 0.5s ease; }
@@ -61,6 +77,7 @@ button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2
 /* MODAL */
 #modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; }
 #modal img { max-width:85%; max-height:85%; border-radius:20px; }
+
 </style>
 </head>
 <body>
@@ -123,7 +140,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   splash.style.display="flex";
 
-  // Animate name function
+  // Animate name
   function animateName() {
     const nameText = "Hannah Prillaman";
     const name = document.getElementById("name");
@@ -133,19 +150,19 @@ document.addEventListener("DOMContentLoaded", function(){
       s.textContent = c;
       s.style.opacity = 0;
       s.style.transition = "opacity 0.6s ease";
-      setTimeout(() => s.style.opacity = 1, i * 180); // slower full name
+      setTimeout(() => s.style.opacity = 1, i * 180);
       name.appendChild(s);
     });
   }
 
-  // Start button click
+  // Touch Me click
   startBtn.onclick = function() {
     splash.style.display = "none";
     main.style.display = "flex";
-    setTimeout(()=>main.classList.add("show"),10); // fade-in
+    setTimeout(()=>main.classList.add("show"), 20); // trigger fade-in
     music.volume = 0.25;
     music.play();
-    animateName(); // triggers name animation
+    animateName(); // animate name after page visible
   };
 
   // Countdown with days
