@@ -32,7 +32,8 @@ html, body {
 
 /* Collage */
 .collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-bottom:20px; }
-.collage img { width:140px; height:140px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); cursor:pointer; }
+.collage img { width:160px; height:160px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); cursor:pointer; transition:transform 0.3s; }
+.collage img:hover { transform:scale(1.05); }
 
 /* Buttons */
 .button-group {
@@ -41,7 +42,7 @@ html, body {
   margin-top:20px;
   position:relative; /* for No hover move */
 }
-.button-group button {
+.button-group button, #startBtn {
   padding:14px 32px;
   border-radius:28px;
   border:none;
@@ -52,7 +53,7 @@ html, body {
   box-shadow:0 4px 12px rgba(0,0,0,0.15);
   transition:all 0.3s ease;
 }
-.button-group button:hover { transform:translateY(-2px); }
+.button-group button:hover, #startBtn:hover { transform:translateY(-2px); }
 
 #noBtn {
   position:relative; /* start inline */
@@ -90,17 +91,17 @@ html, body {
 }
 
 /* Final Page */
-#finalPage {display:flex; flex-direction:column; justify-content:flex-start; align-items:center; text-align:center; padding-top:60px;}
+#finalPage {display:flex; flex-direction:column; justify-content:flex-start; align-items:center; text-align:center; padding:40px 20px; gap:15px;}
 .final-line, #finalImage { opacity:0; transform:translateY(10px); transition:opacity 1.2s ease, transform 1.2s ease; }
 .final-line.show, #finalImage.show { opacity:1; transform:translateY(0); }
-.final-wink { opacity:0; font-size:1.1em; margin-top:30px; transition: opacity 2s ease; }
+.final-wink { opacity:0; font-size:1.1em; margin-top:20px; transition: opacity 2s ease; }
 .final-wink.show { opacity:0.7; }
 
 /* Final image */
-#finalImage { max-width:60%; max-height:50%; margin-top:20px; border-radius:18px; display:block; }
+#finalImage { max-width:60%; max-height:50%; border-radius:18px; display:block; }
 
 /* Replay */
-#replayBtn { margin-top:40px; opacity:0; pointer-events:none; transition:opacity 2s ease; }
+#replayBtn { margin-top:30px; opacity:0; pointer-events:none; transition:opacity 2s ease; }
 #replayBtn.show { opacity:1; pointer-events:auto; }
 
 /* Modal */
@@ -130,7 +131,7 @@ html, body {
     <img src="images/pic6.jpg" onclick="openModal(this)">
   </div>
   <h1 id="name"></h1>
-  <h2>Will you be my Valentine?</h2>
+  <h2>Hannah Prillaman, will you be my Valentine?</h2>
   <div class="button-group">
     <button id="yesBtn">Yes</button>
     <button id="obviouslyBtn">Obviously</button>
@@ -147,9 +148,9 @@ html, body {
   <p class="final-line">Every day with you is my favorite one.</p>
   <p class="final-line">I’m keeping my vow to love you more each and every day — with intention, patience, and joy.</p>
   <p class="final-line">I choose you. Always.</p>
-  <p class="final-wink">(Yes was the correct answer)</p>
   <img id="finalImage" src="images/final.jpg" alt="Final Image">
-  <button id="replayBtn">Replay</button>
+  <p class="final-wink">(Yes was the correct answer)</p>
+  <button id="replayBtn" onclick="replay()">Replay</button>
 </div>
 
 <!-- Modal -->
@@ -183,13 +184,13 @@ document.addEventListener("DOMContentLoaded", function(){
     music.play();
 
     // Animate name letter by letter
-    const name = "cutie";
+    const name = "Hannah Prillaman";
     nameContainer.innerHTML = "";
     name.split("").forEach((letter, index) => {
       const span=document.createElement("span");
       span.textContent=letter;
       nameContainer.appendChild(span);
-      setTimeout(()=>span.classList.add("show"), index*300);
+      setTimeout(()=>span.classList.add("show"), index*150);
     });
   }
 
@@ -242,6 +243,7 @@ document.addEventListener("DOMContentLoaded", function(){
     main.classList.remove("visible");
     final.classList.add("visible");
     finalLines.forEach((el,i)=>setTimeout(()=>el.classList.add("show"),i*800));
+    setTimeout(()=>finalImage.classList.add("show"),2400);
     setTimeout(()=>document.querySelector(".final-wink").classList.add("show"),3200);
     replayBtn.classList.remove("show");
     setTimeout(()=>replayBtn.classList.add("show"),20000);
@@ -258,18 +260,19 @@ document.addEventListener("DOMContentLoaded", function(){
     finalLines.forEach(el=>el.classList.remove("show"));
     document.querySelector(".final-wink").classList.remove("show");
     replayBtn.classList.remove("show");
+    finalImage.classList.remove("show");
     main.classList.add("visible");
     noBtn.style.position='relative';
     noBtn.style.left='0';
     noBtn.style.top='0';
     // Reset name animation
     nameContainer.innerHTML = "";
-    const name="cutie";
+    const name="Hannah Prillaman";
     name.split("").forEach((letter,index)=>{
       const span=document.createElement("span");
       span.textContent=letter;
       nameContainer.appendChild(span);
-      setTimeout(()=>span.classList.add("show"), index*300);
+      setTimeout(()=>span.classList.add("show"), index*150);
     });
   }
 
