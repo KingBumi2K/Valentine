@@ -5,7 +5,6 @@
 <title>Valentine's Surprise</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-/* BODY + GRADIENT */
 body, html {
   margin:0; padding:0;
   height:100%; width:100%;
@@ -23,9 +22,7 @@ h2 { font-size:2em; }
 .page { display:none; flex-direction:column; justify-content:center; align-items:center; height:100vh; width:100vw; text-align:center; padding:20px; box-sizing:border-box; }
 
 /* COLLAGE */
-.collage {
-  display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-top:20px; margin-bottom:30px;
-}
+.collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-top:20px; margin-bottom:30px; }
 .collage img { width:140px; height:140px; object-fit:cover; border-radius:18px; box-shadow:0 10px 25px rgba(0,0,0,0.15); cursor:pointer; }
 
 /* BUTTONS */
@@ -45,14 +42,23 @@ button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2
 @keyframes floatUp {0%{transform:translateY(0) rotate(0deg); opacity:0.7;}25%{transform:translateY(-25vh) rotate(10deg);}50%{transform:translateY(-60vh) rotate(-10deg); opacity:0.85;}75%{transform:translateY(-90vh) rotate(5deg);}100%{transform:translateY(-120vh) rotate(-5deg); opacity:0;}}
 
 /* FINAL SCREEN */
+#finalScreen {
+  display:flex; flex-direction:column; justify-content:flex-start; align-items:center;
+  height:100vh; width:100vw; text-align:center; padding-top:60px; box-sizing:border-box;
+}
 .final-line, #finalImage { opacity:0; transform:translateY(10px); transition: opacity 1.2s ease, transform 1.2s ease; }
 .final-line.show, #finalImage.show { opacity:1; transform:translateY(0); }
 .final-wink { opacity:0; font-size:1.1em; margin-top:30px; transition: opacity 2s ease; }
 .final-wink.show { opacity:0.7; }
+#finalImage { max-width:60%; max-height:50%; margin-top:20px; border-radius:18px; display:block; }
 
 /* REPLAY BUTTON */
 #replayBtn { margin-top:40px; opacity:0; pointer-events:none; transition: opacity 2s ease; }
 #replayBtn.show { opacity:1; pointer-events:auto; }
+
+/* MODAL */
+#modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; }
+#modal img { max-width:85%; max-height:85%; border-radius:20px; }
 </style>
 </head>
 <body>
@@ -100,8 +106,8 @@ button:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,0.2
 </div>
 
 <!-- MODAL -->
-<div id="modal" onclick="this.style.display='none'" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); align-items:center; justify-content:center;">
-  <img id="modalImg" style="max-width:85%; max-height:85%; border-radius:20px;">
+<div id="modal" onclick="this.style.display='none'">
+  <img id="modalImg">
 </div>
 
 <script>
@@ -113,18 +119,17 @@ document.addEventListener("DOMContentLoaded", function(){
   const final = document.getElementById("finalScreen");
   const startBtn = document.getElementById("startBtn");
 
-  // SHOW SPLASH
-  splash.style.display = "flex";
+  splash.style.display="flex";
 
-  // START BUTTON
+  // Start button
   startBtn.onclick = function(){
-    splash.style.display = "none";
-    main.style.display = "flex";
+    splash.style.display="none";
+    main.style.display="flex";
     music.volume = 0.25;
     music.play();
   };
 
-  // NAME FADE IN
+  // Name fade in
   const nameText="Hannah Prillaman";
   const name=document.getElementById("name");
   nameText.split("").forEach((c,i)=>{
@@ -136,45 +141,45 @@ document.addEventListener("DOMContentLoaded", function(){
     name.appendChild(s);
   });
 
-  // COUNTDOWN
+  // Countdown with DAYS
   const countdown=document.getElementById("countdown");
   function updateCountdown(){
     const now=new Date();
     const target=new Date(new Date().getFullYear(),1,14);
     const diff=Math.max(target-now,0);
-    const h=Math.floor(diff/36e5);
-    const m=Math.floor(diff%36e5/6e4);
-    const s=Math.floor(diff%6e4/1000);
-    countdown.textContent=`${h}h ${m}m ${s}s until Valentine’s Day`;
+    const d=Math.floor(diff/86400000);
+    const h=Math.floor((diff%86400000)/3600000);
+    const m=Math.floor((diff%3600000)/60000);
+    const s=Math.floor((diff%60000)/1000);
+    countdown.textContent=`${d}d ${h}h ${m}m ${s}s until Valentine’s Day`;
   }
   setInterval(updateCountdown,1000);
   updateCountdown();
 
-  // HEARTS
+  // Hearts
   function createHeart(){
-    const h = document.createElement("div");
-    h.className = "heart";
-    h.textContent = "❤";
-    h.style.left = Math.random()*100 + "vw";
-    const size = 18 + Math.random()*14;
-    h.style.fontSize = size + "px";
-    const duration = 14 + Math.random()*4;
-    h.style.animationDuration = duration + "s";
-    const delay = Math.random()*4;
-    h.style.animationDelay = delay + "s";
+    const h=document.createElement("div");
+    h.className="heart";
+    h.textContent="❤";
+    h.style.left=Math.random()*100+"vw";
+    const size=18+Math.random()*14;
+    h.style.fontSize=size+"px";
+    const duration=14+Math.random()*4;
+    h.style.animationDuration=duration+"s";
+    h.style.animationDelay=Math.random()*4+"s";
     document.body.appendChild(h);
-    setTimeout(()=>h.remove(), (duration+delay)*1000);
+    setTimeout(()=>h.remove(),(duration+4)*1000);
   }
-  setInterval(createHeart, 1200);
+  setInterval(createHeart,1200);
 
-  // MODAL
+  // Modal
   window.openModal=function(img){
     const modal=document.getElementById("modal");
     modal.style.display="flex";
     document.getElementById("modalImg").src=img.src;
   };
 
-  // NO BUTTON
+  // No button
   const noBtn = document.getElementById("noBtn");
   const protectedElements = [document.querySelector(".collage"), document.getElementById("countdownCard"), document.querySelector(".button-group"), document.getElementById("name"), document.querySelector("h2")];
   function overlapsProtected(x,y){
@@ -200,7 +205,7 @@ document.addEventListener("DOMContentLoaded", function(){
     noBtn.addEventListener("animationend", function h(){ noBtn.classList.remove("wiggle"); noBtn.removeEventListener("animationend", h); });
   };
 
-  // FINAL SCREEN
+  // Final screen
   const replayBtn=document.getElementById("replayBtn");
   const finalImage=document.getElementById("finalImage");
   window.showFinal=function(){
@@ -214,7 +219,7 @@ document.addEventListener("DOMContentLoaded", function(){
     setTimeout(()=>replayBtn.classList.add("show"),20000);
   };
 
-  // REPLAY
+  // Replay
   window.replay=function(){
     final.style.display="none";
     main.style.display="flex";
