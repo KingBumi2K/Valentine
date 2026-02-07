@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Valentine Surprise</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
@@ -12,6 +12,7 @@ html, body {
   font-family:'Inter', sans-serif;
   overflow:hidden;
   background: linear-gradient(135deg, #ffe6f0 0%, #ffc0d9 100%);
+  touch-action: manipulation; /* Prevents accidental zooming on fast taps */
 }
 
 /* Pages */
@@ -33,19 +34,18 @@ html, body {
 .page.visible { opacity:1; visibility: visible; z-index:2; }
 
 /* Collage */
-.collage { display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-bottom:20px; }
+.collage { display:flex; flex-wrap:wrap; justify-content:center; gap:12px; margin-bottom:20px; }
 .collage img { 
-  width:190px; height:190px; 
+  width:180px; height:180px; 
   object-fit:cover; 
   border-radius:18px; 
   box-shadow:0 10px 25px rgba(0,0,0,0.15); 
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
 }
-.collage img:hover { transform: scale(1.08); cursor:pointer; }
 
 /* Buttons Base */
 button {
-  padding: 14px 32px;
+  padding: 14px 28px;
   border-radius: 28px;
   border: none;
   font-size: 1.1em;
@@ -55,14 +55,16 @@ button {
   font-family: 'Playfair Display', serif;
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
   transition: all 0.3s ease;
-  margin: 0; /* Prevents alignment shifts */
 }
 
-/* Hover Animation for all buttons EXCEPT No button */
-button:not(#noBtn):hover {
-  transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 8px 20px rgba(255, 90, 145, 0.4);
-  filter: brightness(1.1);
+/* Hover Animation for all buttons EXCEPT No button (Desktop only) */
+@media (hover: hover) {
+  button:not(#noBtn):hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 8px 20px rgba(255, 90, 145, 0.4);
+    filter: brightness(1.1);
+  }
+  .collage img:hover { transform: scale(1.08); cursor:pointer; }
 }
 
 /* No button specific logic */
@@ -70,7 +72,7 @@ button:not(#noBtn):hover {
   position: absolute;
   z-index: 100;
   transition: left 0.4s ease, top 0.4s ease;
-  min-width: 100px; /* Consistent width for text changes */
+  min-width: 90px;
 }
 #noBtn.wiggle { animation: wiggle 0.5s ease; }
 
@@ -82,33 +84,30 @@ button:not(#noBtn):hover {
   100%{transform:translateX(0);}
 }
 
-/* Button Group Container */
 .button-group {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
   margin-top: 20px;
   position: relative;
-  min-height: 60px; /* Ensures container has height for absolute positioning */
+  min-height: 60px;
 }
 
 /* Pulsating Countdown Card */
 #countdownCard { 
-  margin-top:20px; padding:20px 30px; 
-  max-width:380px; 
+  margin-top:20px; padding:15px 25px; 
+  max-width:340px; 
   background:rgba(255,255,255,0.7); 
   border-radius:25px; 
   box-shadow:0 10px 25px rgba(0,0,0,0.1); 
-  font-size:1.2em; 
-  font-family:'Inter',sans-serif;
+  font-size:1.1em; 
   animation: cardPulse 2.5s infinite ease-in-out;
 }
 
 @keyframes cardPulse {
-  0% { transform: scale(1); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+  0%, 100% { transform: scale(1); }
   50% { transform: scale(1.03); box-shadow: 0 15px 35px rgba(255, 105, 180, 0.2); }
-  100% { transform: scale(1); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
 }
 
 /* Hearts Background */
@@ -117,7 +116,6 @@ button:not(#noBtn):hover {
   bottom:-60px;
   pointer-events:none;
   z-index:1;
-  user-select: none;
   animation-name: floatUp, sway;
   animation-timing-function: linear, ease-in-out;
   animation-iteration-count: infinite;
@@ -126,13 +124,12 @@ button:not(#noBtn):hover {
 @keyframes floatUp {
   0% { bottom: -60px; opacity: 0; }
   10% { opacity: 0.8; }
-  90% { opacity: 0.8; }
   100% { bottom: 110vh; opacity: 0; }
 }
 
 @keyframes sway {
   0%, 100% { transform: translateX(0) rotate(0deg); }
-  50% { transform: translateX(25px) rotate(15deg); }
+  50% { transform: translateX(20px) rotate(15deg); }
 }
 
 /* Name animation */
@@ -147,21 +144,30 @@ button:not(#noBtn):hover {
 #name span.show { opacity:1; transform: translateY(0); }
 
 /* Final Page */
-#finalPage { padding:40px 20px; gap:12px; font-family:'Playfair Display', serif;}
-#finalPage h1.final-line { font-size:2.4em; margin-bottom:10px; color: #ff4d6d; }
+#finalPage h1.final-line { font-size:2.2em; color: #ff4d6d; }
 #finalPage p.final-line { font-size:1.2em; margin:6px 0; color: #555; }
 .final-line, #finalImage { opacity:0; transform:translateY(10px); transition:opacity 1.2s ease, transform 1.2s ease; }
 .final-line.show, #finalImage.show { opacity:1; transform:translateY(0); }
-
-#finalImage { max-width:48%; max-height:45%; border-radius:18px; display:block; margin-top:10px; }
+#finalImage { max-width:60%; max-height:40%; border-radius:18px; margin-top:10px; }
 
 #replayBtn { 
   opacity: 0; 
   visibility: hidden;
-  margin-top: 24px; 
+  margin-top: 20px; 
   transition: opacity 1.5s ease, visibility 1.5s ease; 
 }
 #replayBtn.show { opacity: 1; visibility: visible; }
+
+/* MOBILE ADJUSTMENTS */
+@media (max-width: 600px) {
+  .collage img { width: 130px; height: 130px; }
+  #name span { font-size: 1.6em; }
+  h2 { font-size: 1.2em; }
+  #finalPage h1.final-line { font-size: 1.8em; }
+  #finalPage p.final-line { font-size: 1em; }
+  button { padding: 12px 20px; font-size: 1em; }
+  .button-group { gap: 10px; }
+}
 </style>
 </head>
 <body>
@@ -222,41 +228,31 @@ document.addEventListener("DOMContentLoaded", function(){
 
   let firstHover = true;
   let noHoverCount = 0;
+  const noResponses = ["Wait...", "Really?", "Try again!", "Nope!", "Are you sure?", "Think again!", "Okay, fine!"];
 
-  const noResponses = [
-    "Wait...", "Really?", "Try again!", "Getting warmer...", 
-    "Nope!", "You're persistent!", "Still no?", "Are you sure?", 
-    "Think again!", "Okay, fine!"
-  ];
-
-  // --- 1. POSITIONING & RESET ---
   function resetNoButton() {
     firstHover = true;
     noHoverCount = 0;
     noBtn.innerText = "No";
     noBtn.style.transition = "none"; 
     noBtn.style.position = "absolute";
-    
-    // Use offsetParent coordinates to ensure perfect alignment
     noBtn.style.left = ghostBtn.offsetLeft + "px";
     noBtn.style.top = ghostBtn.offsetTop + "px";
-    
     noBtn.offsetHeight; 
     noBtn.style.transition = "left 0.4s ease, top 0.4s ease";
   }
 
-  // Set initial position
-  window.addEventListener('load', resetNoButton);
-  window.addEventListener('resize', resetNoButton);
+  // Handle No Button Movement
+  const moveNoButton = (e) => {
+    // Prevent accidental clicks on mobile
+    if (e.type === 'touchstart') e.preventDefault();
 
-  // --- 2. NO BUTTON RUN AWAY ---
-  noBtn.addEventListener("mouseover", () => {
     const rects = [".collage", "#name", "h2", ".button-group", "#countdownCard"].map(s => document.querySelector(s).getBoundingClientRect());
     
     noHoverCount++;
     if (noHoverCount % 2 === 0) {
-        const responseIndex = Math.min(Math.floor(noHoverCount / 2) - 1, noResponses.length - 1);
-        noBtn.innerText = noResponses[responseIndex];
+        const idx = Math.min(Math.floor(noHoverCount / 2) - 1, noResponses.length - 1);
+        noBtn.innerText = noResponses[idx];
     }
 
     if (firstHover) {
@@ -272,7 +268,6 @@ document.addEventListener("DOMContentLoaded", function(){
 
     let newX, newY, found = false;
     let attempts = 0;
-
     while (!found && attempts < 50) {
       newX = Math.random() * (window.innerWidth - noBtn.offsetWidth - 40) + 20;
       newY = Math.random() * (window.innerHeight - noBtn.offsetHeight - 40) + 20;
@@ -284,34 +279,36 @@ document.addEventListener("DOMContentLoaded", function(){
     noBtn.style.top = newY + 'px';
     noBtn.classList.add("wiggle");
     setTimeout(() => noBtn.classList.remove("wiggle"), 500);
-  });
+  };
 
-  // --- 3. ROUTINE HEARTS ---
-  const heartColors = ['#ff4d6d', '#ff758f', '#ff85a1', '#fbb1bd', '#ffffff', '#ff0000', '#ffb3c1'];
+  // Switch event based on device
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  noBtn.addEventListener(isMobile ? "touchstart" : "mouseover", moveNoButton);
+
+  // Routine Hearts
+  const heartColors = ['#ff4d6d', '#ff758f', '#ff85a1', '#ffffff', '#ff0000'];
   function createHeart() {
     const heart = document.createElement('div');
     heart.className = 'heart';
     heart.innerHTML = '❤';
-    const color = heartColors[Math.floor(Math.random() * heartColors.length)];
-    const size = Math.floor(Math.random() * 30) + 10; 
     const duration = Math.random() * 10 + 15; 
     heart.style.left = Math.random() * 100 + 'vw';
-    heart.style.color = color;
-    heart.style.fontSize = size + 'px';
+    heart.style.color = heartColors[Math.floor(Math.random() * heartColors.length)];
+    heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
     heart.style.animationDuration = `${duration}s, ${2 + Math.random() * 2}s`;
     document.body.appendChild(heart);
     setTimeout(() => heart.remove(), duration * 1000);
   }
-  setInterval(createHeart, 350);
+  setInterval(createHeart, isMobile ? 600 : 350); // Fewer hearts on mobile for performance
 
-  // --- 4. FLOW LOGIC ---
+  // Flow Logic
   startBtn.onclick = function(){
     splash.classList.remove("visible");
     main.classList.add("visible");
     music.volume = 0.25;
     music.play();
     animateName();
-    resetNoButton(); // Recalculate once main page is visible
+    setTimeout(resetNoButton, 100);
   };
 
   function animateName() {
@@ -360,6 +357,8 @@ document.addEventListener("DOMContentLoaded", function(){
   document.getElementById("yesBtn").onclick = showFinal;
   document.getElementById("obviouslyBtn").onclick = showFinal;
   noBtn.onclick = showFinal;
+
+  window.addEventListener('resize', resetNoButton);
 });
 </script>
 </body>
